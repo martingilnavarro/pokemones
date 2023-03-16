@@ -5,3 +5,7 @@
 .contenedor-pokemon {
     text-align: center;
 }
+
+.nombre-pokemon {
+    font-size:30px;
+}

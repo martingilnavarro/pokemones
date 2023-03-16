@@ -36,14 +36,18 @@ const Pokemon =(props)=> {
 
   return(
     <div className='contenedor-pokemon'>
+      <p className='nombre-pokemon'>{Poke.name}</p>
       <img
-      //className='imagen-pokemon'
-      //src={require(`../imagenes/imagen-pikachu.png`)}
-      //alt='Imagen de {props.imagen}'
+        className='imagen-pokemon'
+        
+        src={'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+pokeId+'.png'}
+        //src={require('../imagenes/imagen-pikachu.png')}
+        alt='Pokemon image'
        />
       <div className='contenedor-caracteristicas-pokemon'>
         
-        <p className='nombre-pokemon'>Name: {Poke.name}</p>
+        
+        
         <p className='evoluciones-pokemon'>Base experience: {Poke.base_experience}</p>
         <p className='altura-pokemon'>Height: {Poke.height}</p>
         <p className='altura-pokemon'>Weight: {Poke.weight}</p>
