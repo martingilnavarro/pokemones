@@ -1,56 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import '../hojas-de-estilo/Pokemon.css';
 import Button from '@mui/material/Button';
+
 import { getPokemon } from '../apis/apis';
 import { useParams } from 'react-router-dom';
 
-const Pokemon =(props)=> {
+
+const Pokemon =()=> {
   const [Poke, setPoke] = useState({});
   const [pokeId, setPokeId] = useState();
   const params = useParams()
+  //const forms = Poke.moves.map((pokeMove) => <p>{pokeMove.move.name}</p>)
 
-  // useEffect(() => {
-  //   getAllPokemon().then((res) =>
-  //     setListPoke(res.data.results)
-  //   ).catch((err)=>{
-  //     console.log("error",err)
-  //   })
-  // },[])
 
   useEffect(() => {
     setPokeId(params.id)
-    console.log(params.id)
     
-
     getPokemon(params.id).then((res) =>
-       setPoke(res.data) /*console.log(res.data)*/
+       setPoke(res.data) 
      ).catch((err)=>{
        console.log("error",err);
       
      })
 
-
-  },[])
+  },[params.id])
 
  
-
   return(
     <div className='contenedor-pokemon'>
       <p className='nombre-pokemon'>{Poke.name}</p>
       <img
-        className='imagen-pokemon'
-        
+        className='imagen-pokemon' 
         src={'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+pokeId+'.png'}
-        //src={require('../imagenes/imagen-pikachu.png')}
-        alt='Pokemon image'
+        alt='Pokemon'
        />
       <div className='contenedor-caracteristicas-pokemon'>
+           
+        <p className='pokemonExperience'>Base experience: {Poke.base_experience}</p>
+        <p className='pokemonHeight'>Height: {Poke.height}</p>
+        <p className='pokemonWeight'>Weight: {Poke.weight}</p>
         
         
-        
-        <p className='evoluciones-pokemon'>Base experience: {Poke.base_experience}</p>
-        <p className='altura-pokemon'>Height: {Poke.height}</p>
-        <p className='altura-pokemon'>Weight: {Poke.weight}</p>
+
       
         <Button variant="contained" href='../'>Return to list</Button>
       </div>     

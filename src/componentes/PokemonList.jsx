@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { getAllPokemon } from '../apis/apis';
+
+
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,10 +10,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { getAllPokemon } from '../apis/apis';
 import { Link } from '@mui/material';
 
+
 const PokemonList = () => {
+
     function createData(name, url) {
         return { name, url };
     }
@@ -17,6 +22,7 @@ const PokemonList = () => {
     const [listPoke, setListPoke] = useState([]);
     const [rowsTable, setRowsTable] = useState([]);
 
+      
     useEffect(() => {
         getAllPokemon().then((res) =>
             setListPoke(res.data.results)
@@ -24,6 +30,7 @@ const PokemonList = () => {
             console.log("error", err)
         })
     }, [])
+
 
     useEffect(() => {
         setRowsTable(listPoke.map((poke) => {
@@ -37,6 +44,8 @@ const PokemonList = () => {
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
+
+                        
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -48,6 +57,8 @@ const PokemonList = () => {
                             <TableCell component="th" scope="row">
                                 <Link href={'./' + row.url.slice(34,row.url.length)}>{row.name}</Link>
                             </TableCell>
+
+              
                         </TableRow>
                     ))}
                 </TableBody>
