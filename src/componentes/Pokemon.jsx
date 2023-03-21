@@ -3,17 +3,22 @@ import '../hojas-de-estilo/Pokemon.css';
 import Button from '@mui/material/Button';
 
 import { getPokemon } from '../apis/apis';
+import { getPokemonSpecies } from '../apis/apis';
 import { useParams } from 'react-router-dom';
+
 
 
 const Pokemon =()=> {
   const [Poke, setPoke] = useState({});
+  const [pokeSpecies, setPokeSpecies] = useState({});
   const [pokeId, setPokeId] = useState();
   const [pokeMoves, setPokeMoves] = useState([])
   const [pokeAbilities, setPokeAbilities] = useState([])
   const params = useParams()
   const listMoves = pokeMoves.map((pokeMove) => <li> {pokeMove.move.name}</li>)
   const listAbilities = pokeAbilities.map((pokeAbility) => <li> {pokeAbility.ability.name}</li>)
+  const pokeEvolution = pokeSpecies.evolves_from_species
+  
 
 
   useEffect(() => {
@@ -29,35 +34,44 @@ const Pokemon =()=> {
      })
 
 
+  },[params.id])
 
-     
+  useEffect(() => {
+    setPokeId(params.id)
+    
+    getPokemonSpecies(params.id).then((res) => {
+       setPokeSpecies(res.data)
 
-     
+ }
+     ).catch((err)=>{
+       console.log("error",err);
+      
+     })
+
 
   },[params.id])
 
  
   return(
-    <div className='contenedor-pokemon'>
+    
+    <div className='pokemonContainer'>
       <Button variant="contained" href='../'>Return to list</Button>
-      <p className='nombre-pokemon'>{Poke.name}</p>
-      <img
-        className='imagen-pokemon' 
+      
+      
+      <div className='pokemonCharacteristics'>
+        <p className='pokemonName'><strong>Name:</strong> {Poke.name}</p> 
+        <img
+        className='pokemonImage' 
         src={'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+pokeId+'.png'}
         alt='Pokemon'
        />
-      <div className='contenedor-caracteristicas-pokemon'>
-           
-        <p className='pokemonExperience'><strong>Base experience:</strong> {Poke.base_experience}</p>
+        <p className='pokemonEvolution'><strong>Evolves from:</strong> {pokeEvolution ? pokeEvolution.name : 'none'}</p>
         <p className='pokemonHeight'><strong>Height:</strong> {Poke.height}</p>
         <p className='pokemonWeight'><strong>Weight:</strong> {Poke.weight}</p>
         <p className='pokemonAbilities'><strong>Abilities:</strong> {listAbilities}</p>
         <p className='pokemonMoves'><strong>Moves:</strong> {listMoves}</p>
         
-        
 
-      
-        
       </div>     
     </div>
   );

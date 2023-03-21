@@ -1,11 +1,13 @@
-.imagen-pokemon {
-    height:300px;
+.pokemonImage {
+    height:200px;
 }
 
-.contenedor-pokemon {
+.pokemonContainer {
     text-align: center;
 }
 
-.nombre-pokemon {
-    font-size:30px;
+
+
+li {
+    text-align: center;
 }
