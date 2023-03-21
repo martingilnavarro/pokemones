@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import { getPokemon } from '../apis/apis';
 import { getPokemonSpecies } from '../apis/apis';
 import { useParams } from 'react-router-dom';
+import { Link } from '@mui/material';
 
 
 
@@ -65,7 +66,8 @@ const Pokemon =()=> {
         src={'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+pokeId+'.png'}
         alt='Pokemon'
        />
-        <p className='pokemonEvolution'><strong>Evolves from:</strong> {pokeEvolution ? pokeEvolution.name : 'none'}</p>
+        <p className='pokemonEvolution'><strong>Evolves from:</strong> {pokeEvolution ? 
+        <Link href={'.././' + pokeEvolution.url.slice(42,pokeEvolution.url.length)}>{pokeEvolution.name} </Link> : 'none'}</p>
         <p className='pokemonHeight'><strong>Height:</strong> {Poke.height}</p>
         <p className='pokemonWeight'><strong>Weight:</strong> {Poke.weight}</p>
         <p className='pokemonAbilities'><strong>Abilities:</strong> {listAbilities}</p>
