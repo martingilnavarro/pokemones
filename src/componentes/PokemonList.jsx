@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllPokemon } from '../apis/apis';
-
+import '../hojas-de-estilo/PokemonList.css';
 
 
 import Table from '@mui/material/Table';
@@ -50,7 +50,7 @@ const PokemonList = () => {
                 </TableHead>
                 <TableBody>
                     {rowsTable.map((row) => (
-                        <TableRow
+                        <TableRow 
                             key={row.name}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >

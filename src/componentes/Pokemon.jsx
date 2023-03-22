@@ -7,6 +7,11 @@ import { getPokemonSpecies } from '../apis/apis';
 import { useParams } from 'react-router-dom';
 import { Link } from '@mui/material';
 
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import CardActions from '@mui/material/CardActions';
+
 
 
 const Pokemon =()=> {
@@ -19,6 +24,7 @@ const Pokemon =()=> {
   const listMoves = pokeMoves.map((pokeMove) => <li> {pokeMove.move.name}</li>)
   const listAbilities = pokeAbilities.map((pokeAbility) => <li> {pokeAbility.ability.name}</li>)
   const pokeEvolution = pokeSpecies.evolves_from_species
+  
   
 
 
@@ -55,27 +61,41 @@ const Pokemon =()=> {
  
   return(
     
+    
     <div className='pokemonContainer'>
-      <Button variant="contained" href='../'>Return to list</Button>
-      
-      
-      <div className='pokemonCharacteristics'>
-        <p className='pokemonName'><strong>Name:</strong> {Poke.name}</p> 
+      <Card sx={{ minWidth: 275 }}>
+      <CardActions>
+        <Button size="small" href='../'>Return to list</Button>
+      </CardActions>
+      <CardContent>
+        
+        <Typography variant="h5" component="div">
+          <strong>Name:</strong> {Poke.name}
+        </Typography>
         <img
         className='pokemonImage' 
         src={'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+pokeId+'.png'}
         alt='Pokemon'
        />
-        <p className='pokemonEvolution'><strong>Evolves from:</strong> {pokeEvolution ? 
-        <Link href={'.././' + pokeEvolution.url.slice(42,pokeEvolution.url.length)}>{pokeEvolution.name} </Link> : 'none'}</p>
-        <p className='pokemonHeight'><strong>Height:</strong> {Poke.height}</p>
-        <p className='pokemonWeight'><strong>Weight:</strong> {Poke.weight}</p>
-        <p className='pokemonAbilities'><strong>Abilities:</strong> {listAbilities}</p>
-        <p className='pokemonMoves'><strong>Moves:</strong> {listMoves}</p>
-        
-
-      </div>     
+        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          <strong>Evolves from:</strong> {pokeEvolution ? 
+          <Link href={'.././' + pokeEvolution.url.slice(42,pokeEvolution.url.length)}>{pokeEvolution.name} </Link> : 'none'}
+        </Typography>
+        <Typography variant="body2">
+          <p><strong>Height:</strong> {Poke.height}</p>
+          <p><strong>Weight:</strong> {Poke.weight}</p>
+          <p><strong>Abilities:</strong> {listAbilities}</p>
+          <p><strong>Moves:</strong> {listMoves}</p>
+          
+        </Typography>
+      </CardContent>
+      
+      
+      
+      
+      </Card>    
     </div>
+    
   );
 }
 
