@@ -43,7 +43,7 @@ const PokemonList = () => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Name</TableCell>
+                        <TableCell></TableCell>
 
                         
                     </TableRow>
@@ -52,7 +52,7 @@ const PokemonList = () => {
                     {rowsTable.map((row) => (
                         <TableRow 
                             key={row.name}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            sx={{ '&:last-child td, &:last-child th': { border: 100 } }}
                         >
                             <TableCell component="th" scope="row">
                                 <Link href={'./' + row.url.slice(34,row.url.length)}>{row.name}</Link>

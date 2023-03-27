@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import '../hojas-de-estilo/Pokemon.css';
 import Button from '@mui/material/Button';
 
+
 import { getPokemon } from '../apis/apis';
 import { getPokemonSpecies } from '../apis/apis';
+import { getChain } from '../apis/apis';
 import { useParams } from 'react-router-dom';
-import { Link } from '@mui/material';
+import { Container, Grid, Link } from '@mui/material';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -13,89 +15,119 @@ import Typography from '@mui/material/Typography';
 import CardActions from '@mui/material/CardActions';
 
 
-
-const Pokemon =()=> {
+const Pokemon = () => {
   const [Poke, setPoke] = useState({});
   const [pokeSpecies, setPokeSpecies] = useState({});
-  const [pokeId, setPokeId] = useState();
   const [pokeMoves, setPokeMoves] = useState([])
   const [pokeAbilities, setPokeAbilities] = useState([])
+  const [pokeSprites, setPokeSprites] = useState({})
+  const [pokeChain, setPokeChain] = useState({})
+  const [pokeFirstSpecies, setPokeFirstSpecies] = useState({})
+  const [pokeSecondSpecies, setPokeSecondSpecies] = useState({})
+  const [pokeThirdSpecies, setPokeThirdSpecies] = useState({})
+
   const params = useParams()
-  const listMoves = pokeMoves.map((pokeMove) => <li> {pokeMove.move.name}</li>)
-  const listAbilities = pokeAbilities.map((pokeAbility) => <li> {pokeAbility.ability.name}</li>)
-  const pokeEvolution = pokeSpecies.evolves_from_species
-  
-  
-
+  const listMoves = pokeMoves.map((pokeMove) => <li key={pokeMove.move.name}> {pokeMove.move.name}</li>)
+  const listAbilities = pokeAbilities.map((pokeAbility) => <li key={pokeAbility.ability.name}> {pokeAbility.ability.name}</li>)
+  const pokeEvolvesFrom = pokeSpecies.evolves_from_species
+  const pokeEvolutionChain = pokeSpecies.evolution_chain
+  const pokeIdChain = parseInt(pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : 1)
 
   useEffect(() => {
-    setPokeId(params.id)
-    
+
     getPokemon(params.id).then((res) => {
-       setPoke(res.data)
-       setPokeMoves(res.data.moves)
-       setPokeAbilities(res.data.abilities) }
-     ).catch((err)=>{
-       console.log("error",err);
-      
-     })
+      setPoke(res.data)
+      setPokeMoves(res.data.moves)
+      setPokeAbilities(res.data.abilities)
+      setPokeSprites(res.data.sprites)
+    }
+    ).catch((err) => {
+      console.log("error", err);
 
+    })
 
-  },[params.id])
+  }, [params.id])
+
 
   useEffect(() => {
-    setPokeId(params.id)
-    
+
     getPokemonSpecies(params.id).then((res) => {
-       setPokeSpecies(res.data)
+      setPokeSpecies(res.data)
 
- }
-     ).catch((err)=>{
-       console.log("error",err);
-      
-     })
+    }
+    ).catch((err) => {
+      console.log("error", err);
+
+    })
+
+  }, [params.id])
+
+  useEffect(() => {
+
+    getChain(pokeIdChain).then((res) => {
+      setPokeChain(res.data.chain)
+      setPokeFirstSpecies(res.data.chain.species)
+      setPokeSecondSpecies(res.data.chain.evolves_to[0].species)
+      setPokeThirdSpecies(res.data.chain.evolves_to[0].evolves_to[0].species)
+
+    }
+    ).catch((err) => {
+      console.log("error!!!", err);
+
+    })
+
+  }, [pokeIdChain])
 
 
-  },[params.id])
 
- 
-  return(
-    
-    
-    <div className='pokemonContainer'>
-      <Card sx={{ minWidth: 275 }}>
-      <CardActions>
-        <Button size="small" href='../'>Return to list</Button>
-      </CardActions>
-      <CardContent>
-        
-        <Typography variant="h5" component="div">
-          <strong>Name:</strong> {Poke.name}
-        </Typography>
-        <img
-        className='pokemonImage' 
-        src={'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+pokeId+'.png'}
-        alt='Pokemon'
-       />
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          <strong>Evolves from:</strong> {pokeEvolution ? 
-          <Link href={'.././' + pokeEvolution.url.slice(42,pokeEvolution.url.length)}>{pokeEvolution.name} </Link> : 'none'}
-        </Typography>
-        <Typography variant="body2">
-          <p><strong>Height:</strong> {Poke.height}</p>
-          <p><strong>Weight:</strong> {Poke.weight}</p>
-          <p><strong>Abilities:</strong> {listAbilities}</p>
-          <p><strong>Moves:</strong> {listMoves}</p>
+  return (
+
+    //<div className='pokemonContainer'>
+    <Container>
+      <Card sx={{ maxWidth: 275 }}>
+        <CardActions >
+          <Button size="small" href='../'>Return to list</Button>
+        </CardActions>
+        <CardContent sx={{ justifyContent: "center" }}>
+          <Typography variant='h5' sx={{ fontWeight: "bold" }}>{Poke.name}</Typography>
           
-        </Typography>
-      </CardContent>
-      
-      
-      
-      
-      </Card>    
-    </div>
-    
+
+          <img
+            className='pokemonImage'
+            src={pokeSprites.front_default}
+            alt='Pokemon'
+          />
+          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          <strong>Evolves from:</strong> {pokeEvolvesFrom ?
+              <Link href={'.././' + pokeEvolvesFrom.url.slice(42, pokeEvolvesFrom.url.length)}>{pokeEvolvesFrom.name} </Link> : 'none'}
+           <br />
+           
+            <br />
+           <strong>Evolution Chain:</strong> 
+           <br />
+           {pokeFirstSpecies.name}
+           <br />
+           {pokeSecondSpecies.name}
+           <br />
+           {pokeThirdSpecies.name}
+            
+          </Typography>
+          <Typography variant="body2">
+
+            <br />
+
+            <strong>Height:</strong> {Poke.height}<br /><br />
+            <strong>Weight:</strong> {Poke.weight}<br /><br />
+            <strong>Abilities:</strong> {listAbilities}<br />
+            <strong>Moves:</strong> {listMoves}<br />
+            
+
+          </Typography>
+        </CardContent>
+      </Card>
+    </Container>
+    //</div>
+
   );
 }
 

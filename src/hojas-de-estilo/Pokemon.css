@@ -1,9 +1,12 @@
 .pokemonImage {
     height:200px;
+    
 }
 
 .pokemonContainer {
     text-align: center;
+    padding: 10px 200px;
+    background-color:aliceblue;
 }
 
 
