@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllPokemon } from '../apis/apis';
-import '../hojas-de-estilo/PokemonList.css';
+
 
 
 import Table from '@mui/material/Table';

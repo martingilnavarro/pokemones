@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../hojas-de-estilo/Pokemon.css';
+
 import Button from '@mui/material/Button';
 
 
@@ -7,12 +7,20 @@ import { getPokemon } from '../apis/apis';
 import { getPokemonSpecies } from '../apis/apis';
 import { getChain } from '../apis/apis';
 import { useParams } from 'react-router-dom';
-import { Container, Grid, Link } from '@mui/material';
+
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import CardActions from '@mui/material/CardActions';
+import CardMedia from '@mui/material/CardMedia';
+import CardHeader from '@mui/material/CardHeader';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import List from '@mui/material/List';
+import Grid from '@mui/material/Grid'
+
+
 
 
 const Pokemon = () => {
@@ -21,17 +29,49 @@ const Pokemon = () => {
   const [pokeMoves, setPokeMoves] = useState([])
   const [pokeAbilities, setPokeAbilities] = useState([])
   const [pokeSprites, setPokeSprites] = useState({})
-  const [pokeChain, setPokeChain] = useState({})
   const [pokeFirstSpecies, setPokeFirstSpecies] = useState({})
   const [pokeSecondSpecies, setPokeSecondSpecies] = useState({})
   const [pokeThirdSpecies, setPokeThirdSpecies] = useState({})
 
   const params = useParams()
-  const listMoves = pokeMoves.map((pokeMove) => <li key={pokeMove.move.name}> {pokeMove.move.name}</li>)
-  const listAbilities = pokeAbilities.map((pokeAbility) => <li key={pokeAbility.ability.name}> {pokeAbility.ability.name}</li>)
-  const pokeEvolvesFrom = pokeSpecies.evolves_from_species
+
+
+  const listMoves = pokeMoves.map((pokeMove) => 
+  <ListItem disablePadding>
+    <ListItemButton>
+      <ListItemText primary={pokeMove.move.name} />
+    </ListItemButton>
+  </ListItem> )
+  //<li key={pokeMove.move.name}> {pokeMove.move.name}</li>)
+  const listAbilities = pokeAbilities.map((pokeAbility) => 
+  <ListItem disablePadding>
+    <ListItemButton>
+      <ListItemText primary={pokeAbility.ability.name} />
+    </ListItemButton>
+  </ListItem> )
+  
+  //<li> {pokeAbility.ability.name}</li>)
+  
+  
   const pokeEvolutionChain = pokeSpecies.evolution_chain
-  const pokeIdChain = parseInt(pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : 1)
+  const pokeIdChain = parseInt(pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : "")
+  const pokeEvolutions = [];
+  pokeEvolutions.push(pokeFirstSpecies.name)
+  pokeEvolutions.push(pokeSecondSpecies.name)
+  pokeEvolutions.push(pokeThirdSpecies.name)
+  const listEvolutions = pokeEvolutions.map((pokeEvolution) => 
+  <ListItem disablePadding>
+    <ListItemButton component="a" href={'.././' + pokeEvolution}>
+      <ListItemText primary={pokeEvolution} />
+    </ListItemButton>
+  </ListItem> )
+  const pokeHeight = `Height: ${Poke.height}`
+  const pokeWeight = `Weight: ${Poke.weight}`
+  //<li key={pokeEvolution}> 
+  //<Link href={'.././' + pokeEvolution}>{pokeEvolution}</Link></li>)
+  
+    
+
 
   useEffect(() => {
 
@@ -65,7 +105,6 @@ const Pokemon = () => {
   useEffect(() => {
 
     getChain(pokeIdChain).then((res) => {
-      setPokeChain(res.data.chain)
       setPokeFirstSpecies(res.data.chain.species)
       setPokeSecondSpecies(res.data.chain.evolves_to[0].species)
       setPokeThirdSpecies(res.data.chain.evolves_to[0].evolves_to[0].species)
@@ -82,50 +121,56 @@ const Pokemon = () => {
 
   return (
 
-    //<div className='pokemonContainer'>
-    <Container>
-      <Card sx={{ maxWidth: 275 }}>
-        <CardActions >
-          <Button size="small" href='../'>Return to list</Button>
-        </CardActions>
-        <CardContent sx={{ justifyContent: "center" }}>
-          <Typography variant='h5' sx={{ fontWeight: "bold" }}>{Poke.name}</Typography>
+    
+    <Grid container spacing={0} direction='column' alignItems='center' justify="center" style={{ minHeight: '100vh' }}>
+        <Button size="small" href='../'>Return to list</Button>
+      <Card sx={{ maxWidth: 275}}>
+        
+        <CardHeader 
+          title={Poke.name}
+          
+        />
+
+<CardMedia
+        component="img"
+        height="194"
+        image={pokeSprites.front_default}
+        alt={Poke.name}
+      />
+        <CardContent>
           
 
-          <img
-            className='pokemonImage'
-            src={pokeSprites.front_default}
-            alt='Pokemon'
-          />
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          <strong>Evolves from:</strong> {pokeEvolvesFrom ?
-              <Link href={'.././' + pokeEvolvesFrom.url.slice(42, pokeEvolvesFrom.url.length)}>{pokeEvolvesFrom.name} </Link> : 'none'}
-           <br />
-           
-            <br />
-           <strong>Evolution Chain:</strong> 
-           <br />
-           {pokeFirstSpecies.name}
-           <br />
-           {pokeSecondSpecies.name}
-           <br />
-           {pokeThirdSpecies.name}
             
-          </Typography>
-          <Typography variant="body2">
+          
+            <Typography variant="h6">Evolution Chain:</Typography>
+              <List>
+              {listEvolutions}
+              </List>
 
-            <br />
+              
+              <Typography variant="h6">Physical Characteristics:</Typography> 
+              <List>
+              <ListItem disablePadding>
+                <ListItemButton>
+                <ListItemText primary={pokeHeight}/>
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton>
+                <ListItemText primary={pokeWeight}/>
+                </ListItemButton>
+              </ListItem>
+              </List>
 
-            <strong>Height:</strong> {Poke.height}<br /><br />
-            <strong>Weight:</strong> {Poke.weight}<br /><br />
-            <strong>Abilities:</strong> {listAbilities}<br />
-            <strong>Moves:</strong> {listMoves}<br />
+              <Typography variant="h6">Abilities:</Typography> <List>{listAbilities}</List>
+              <Typography variant="h6">Moves:</Typography> <List>{listMoves}</List>
             
 
           </Typography>
         </CardContent>
       </Card>
-    </Container>
+    </Grid>
     //</div>
 
   );
