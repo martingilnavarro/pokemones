@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { getAllPokemon } from '../apis/apis';
 
 
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -43,9 +42,7 @@ const PokemonList = () => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell></TableCell>
-
-                        
+                        <TableCell>POKEMON NAME</TableCell>  
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -55,10 +52,9 @@ const PokemonList = () => {
                             sx={{ '&:last-child td, &:last-child th': { border: 100 } }}
                         >
                             <TableCell component="th" scope="row">
-                                <Link href={'./' + row.url.slice(34,row.url.length)}>{row.name}</Link>
+                                <Link href={'./' + row.name}>{row.name}</Link>
                             </TableCell>
 
-              
                         </TableRow>
                     ))}
                 </TableBody>

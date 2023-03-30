@@ -8,8 +8,8 @@ const getPokemon = (id) => {
     return baseURL.get(`/pokemon/${id}/`)
 }
 
-const getPokemonSpecies = (id) => {
-    return baseURL.get(`/pokemon-species/${id}/`)
+const getPokemonSpecies = (idSpecies) => {
+    return baseURL.get(`/pokemon-species/${idSpecies}/`)
 }
 
 const getChain = (idChain) => {
