@@ -27,39 +27,24 @@ const Pokemon = () => {
   
   const [pokeFirstSpecies, setPokeFirstSpecies] = useState({})
   const [pokeFirstEvolve, setPokeFirstEvolve] = useState([])
-  const [pokeSecondSpecies, setPokeSecondSpecies] = useState({})
   const [pokeSecondEvolve, setPokeSecondEvolve] = useState([])
-  const [pokeThirdSpecies, setPokeThirdSpecies] = useState({})
-  
+ 
 
   const params = useParams()
 
-  const listMoves = pokeMoves.map((pokeMove) => 
-  <ListItem disablePadding>
-    <ListItemButton>
-      <ListItemText primary={pokeMove.move.name} />
-    </ListItemButton>
-  </ListItem> )
 
-  const listAbilities = pokeAbilities.map((pokeAbility) => 
-  <ListItem disablePadding>
-    <ListItemButton>
-      <ListItemText primary={pokeAbility.ability.name} />
-    </ListItemButton>
-  </ListItem> )
   
   
   const pokeEvolutionChain = pokeSpecies.evolution_chain
-  const idChain = parseInt(pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : "")
+  const idChain = parseInt(pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : 1)
   const pokeEvolutions = [];
+
   pokeEvolutions.push(pokeFirstSpecies.name)
-  pokeFirstEvolve[0] && pokeEvolutions.push(pokeSecondSpecies.name)
-  pokeSecondEvolve[0] && pokeEvolutions.push(pokeThirdSpecies.name)
+  for(let i=0; pokeFirstEvolve[i]; i++) {pokeFirstEvolve[i] && pokeEvolutions.push(pokeFirstEvolve[i].species.name)}
+  pokeSecondEvolve[0] && pokeEvolutions.push(pokeSecondEvolve[0].species.name)
 
   const pokeSpecie = Poke.species
-  const idSpecies = parseInt(pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : "")
-
- 
+  const idSpecies = parseInt(pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : 1)
 
   const listEvolutions = pokeEvolutions.map((pokeEvolution) => 
   <ListItem disablePadding>
@@ -70,6 +55,20 @@ const Pokemon = () => {
 
   const pokeHeight = `Height: ${Poke.height}`
   const pokeWeight = `Weight: ${Poke.weight}`
+
+  const listAbilities = pokeAbilities.map((pokeAbility) => 
+    <ListItem disablePadding>
+      <ListItemButton>
+        <ListItemText primary={pokeAbility.ability.name} />
+      </ListItemButton>
+    </ListItem> )
+
+  const listMoves = pokeMoves.map((pokeMove) => 
+    <ListItem disablePadding>
+      <ListItemButton>
+        <ListItemText primary={pokeMove.move.name} />
+      </ListItemButton>
+    </ListItem> )
  
 
   useEffect(() => {
@@ -103,9 +102,8 @@ const Pokemon = () => {
       
       setPokeFirstSpecies(res.data.chain.species)
       setPokeFirstEvolve(res.data.chain.evolves_to)
-      setPokeSecondSpecies(res.data.chain.evolves_to[0].species)
-      setPokeSecondEvolve(res.data.chain.evolves_to[0].evolves_to)
-      setPokeThirdSpecies(res.data.chain.evolves_to[0].evolves_to[0].species)
+      setPokeSecondEvolve(res.data.chain.evolves_to[0] ? res.data.chain.evolves_to[0].evolves_to : "") 
+      
 
     }
     ).catch((err) => {
@@ -120,7 +118,7 @@ const Pokemon = () => {
   return (
 
     
-    <Grid container spacing={0} direction='column' alignItems='center' justify="center" style={{ minHeight: '100vh' }}>
+    <Grid container spacing={0} direction='column' alignItems='center' justify="center" style={{ minHeight: '100vh', backgroundColor: '#EEEEEE' }}>
 
       <Button size="small" href='../'>Return to list</Button>
 
@@ -139,7 +137,7 @@ const Pokemon = () => {
         
         <CardContent> 
 
-            <Typography variant="h6">Evolution Chain:</Typography>
+            <Typography variant="h6">Evolutions:</Typography>
             <List> {listEvolutions} </List>
 
             <Typography variant="h6">Physical Characteristics:</Typography> 
