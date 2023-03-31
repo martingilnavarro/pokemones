@@ -38,7 +38,8 @@ const PokemonList = () => {
     }, [listPoke])
 
     return (
-        <TableContainer component={Paper}>
+        
+        <TableContainer component={Paper} style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>

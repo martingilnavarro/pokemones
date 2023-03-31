@@ -15,7 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
-import Grid from '@mui/material/Grid'
+import Grid from '@mui/material/Grid';
 
 
 const Pokemon = () => {
@@ -46,8 +46,8 @@ const Pokemon = () => {
   const pokeSpecie = Poke.species
   const idSpecies = parseInt(pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : 1)
 
-  const listEvolutions = pokeEvolutions.map((pokeEvolution) => 
-  <ListItem disablePadding>
+  const listEvolutions = pokeEvolutions.map((pokeEvolution, i) => 
+  <ListItem disablePadding key={i}>
     <ListItemButton component="a" href={'.././' + pokeEvolution}>
       <ListItemText primary={pokeEvolution} />
     </ListItemButton>
@@ -56,15 +56,15 @@ const Pokemon = () => {
   const pokeHeight = `Height: ${Poke.height}`
   const pokeWeight = `Weight: ${Poke.weight}`
 
-  const listAbilities = pokeAbilities.map((pokeAbility) => 
-    <ListItem disablePadding>
+  const listAbilities = pokeAbilities.map((pokeAbility, i) => 
+    <ListItem disablePadding key={i}>
       <ListItemButton>
         <ListItemText primary={pokeAbility.ability.name} />
       </ListItemButton>
     </ListItem> )
 
-  const listMoves = pokeMoves.map((pokeMove) => 
-    <ListItem disablePadding>
+  const listMoves = pokeMoves.map((pokeMove, i) => 
+    <ListItem disablePadding key={i}>
       <ListItemButton>
         <ListItemText primary={pokeMove.move.name} />
       </ListItemButton>
@@ -118,9 +118,9 @@ const Pokemon = () => {
   return (
 
     
-    <Grid container spacing={0} direction='column' alignItems='center' justify="center" style={{ minHeight: '100vh', backgroundColor: '#EEEEEE' }}>
+    <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
 
-      <Button size="small" href='../'>Return to list</Button>
+      <Button size="small" href='../' >Return to list</Button>
 
       <Card sx={{ maxWidth: 275}}> 
 
