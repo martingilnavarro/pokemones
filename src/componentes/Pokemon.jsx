@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
+//import gets from apis
 import { getPokemon } from '../apis/apis';
 import { getPokemonSpecies } from '../apis/apis';
 import { getChain } from '../apis/apis';
+
 import { useParams } from 'react-router-dom';
 
+//imports material UI
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -25,52 +28,14 @@ const Pokemon = () => {
   const [pokeAbilities, setPokeAbilities] = useState([])
   const [pokeSprites, setPokeSprites] = useState({})
   
+  // evolutions
   const [pokeFirstSpecies, setPokeFirstSpecies] = useState({})
   const [pokeFirstEvolve, setPokeFirstEvolve] = useState([])
   const [pokeSecondEvolve, setPokeSecondEvolve] = useState([])
  
-
   const params = useParams()
 
-
-  
-  
-  const pokeEvolutionChain = pokeSpecies.evolution_chain
-  const idChain = parseInt(pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : 1)
-  const pokeEvolutions = [];
-
-  pokeEvolutions.push(pokeFirstSpecies.name)
-  for(let i=0; pokeFirstEvolve[i]; i++) {pokeFirstEvolve[i] && pokeEvolutions.push(pokeFirstEvolve[i].species.name)}
-  pokeSecondEvolve[0] && pokeEvolutions.push(pokeSecondEvolve[0].species.name)
-
-  const pokeSpecie = Poke.species
-  const idSpecies = parseInt(pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : 1)
-
-  const listEvolutions = pokeEvolutions.map((pokeEvolution, i) => 
-  <ListItem disablePadding key={i}>
-    <ListItemButton component="a" href={'.././' + pokeEvolution}>
-      <ListItemText primary={pokeEvolution} />
-    </ListItemButton>
-  </ListItem> )
-
-  const pokeHeight = `Height: ${Poke.height}`
-  const pokeWeight = `Weight: ${Poke.weight}`
-
-  const listAbilities = pokeAbilities.map((pokeAbility, i) => 
-    <ListItem disablePadding key={i}>
-      <ListItemButton>
-        <ListItemText primary={pokeAbility.ability.name} />
-      </ListItemButton>
-    </ListItem> )
-
-  const listMoves = pokeMoves.map((pokeMove, i) => 
-    <ListItem disablePadding key={i}>
-      <ListItemButton>
-        <ListItemText primary={pokeMove.move.name} />
-      </ListItemButton>
-    </ListItem> )
- 
-
+  // get Pokemon data from API
   useEffect(() => {
 
     getPokemon(params.id).then((res) => {
@@ -85,41 +50,74 @@ const Pokemon = () => {
   }, [params.id])
 
 
-  useEffect(() => {
+  // get species id (need to obtain chain id) 
+  const pokeSpecie = Poke.species
+  const idSpecies = pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : 1
 
+  // get Pokemon species data from API (needed to get chain id)
+  useEffect(() => {
     getPokemonSpecies(idSpecies).then((res) => {
       setPokeSpecies(res.data)
     }
     ).catch((err) => {
       console.log("error", err);
     })
-
   }, [idSpecies])
+  
+  // get chain id
+  const pokeEvolutionChain = pokeSpecies.evolution_chain
+  const idChain = pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : 1
 
+  // get Pokemon evolutions data from API
   useEffect(() => {
-
-    getChain(idChain).then((res) => {
-      
+    getChain(idChain).then((res) => {     
       setPokeFirstSpecies(res.data.chain.species)
       setPokeFirstEvolve(res.data.chain.evolves_to)
-      setPokeSecondEvolve(res.data.chain.evolves_to[0] ? res.data.chain.evolves_to[0].evolves_to : "") 
-      
-
+      setPokeSecondEvolve(res.data.chain.evolves_to[0] ? res.data.chain.evolves_to[0].evolves_to : "")      
     }
     ).catch((err) => {
       console.log("error!!!", err);
-
     })
-
   }, [idChain])
 
 
+  // push evolutions in an array 
+  const pokeEvolutions = [];
+  pokeEvolutions.push(pokeFirstSpecies.name)
+  for(let i=0; pokeFirstEvolve[i]; i++) {pokeFirstEvolve[i] && pokeEvolutions.push(pokeFirstEvolve[i].species.name)}
+  pokeSecondEvolve[0] && pokeEvolutions.push(pokeSecondEvolve[0].species.name)
 
+  
+  // show arrays into a list (evolutions, abilities, and moves)
+  const listEvolutions = pokeEvolutions.map((pokeEvolution, i) => 
+  <ListItem disablePadding key={i}>
+    <ListItemButton component="a" href={'.././' + pokeEvolution}>
+      <ListItemText primary={pokeEvolution} />
+    </ListItemButton>
+  </ListItem> )
+
+  const listAbilities = pokeAbilities.map((pokeAbility, i) => 
+    <ListItem disablePadding key={i}>
+      <ListItemButton>
+        <ListItemText primary={pokeAbility.ability.name} />
+      </ListItemButton>
+    </ListItem> )
+
+  const listMoves = pokeMoves.map((pokeMove, i) => 
+    <ListItem disablePadding key={i}>
+      <ListItemButton>
+        <ListItemText primary={pokeMove.move.name} />
+      </ListItemButton>
+    </ListItem> )
+
+  const pokeHeight = `Height: ${Poke.height}`
+  const pokeWeight = `Weight: ${Poke.weight}`
+ 
+ 
   return (
 
-    
     <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
-
+      
       <Button size="small" href='../' >Return to list</Button>
 
       <Card sx={{ maxWidth: 275}}> 

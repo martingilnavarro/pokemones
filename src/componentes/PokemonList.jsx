@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAllPokemon } from '../apis/apis';
 
-
+//import material UI
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -21,7 +21,7 @@ const PokemonList = () => {
     const [listPoke, setListPoke] = useState([]);
     const [rowsTable, setRowsTable] = useState([]);
 
-      
+    // get list of Pokemons from API  
     useEffect(() => {
         getAllPokemon().then((res) =>
             setListPoke(res.data.results)
@@ -30,13 +30,14 @@ const PokemonList = () => {
         })
     }, [])
 
-
+    //set data in table row
     useEffect(() => {
         setRowsTable(listPoke.map((poke) => {
             return createData(poke.name, poke.url)
         }))
     }, [listPoke])
 
+    // display data
     return (
         
         <TableContainer component={Paper} style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
