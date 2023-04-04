@@ -136,7 +136,7 @@ const Pokemon = () => {
         <CardContent> 
 
             <Typography variant="h6">Evolutions:</Typography>
-            <List> {listEvolutions} </List>
+            <List> {pokeEvolutionChain ? listEvolutions: "None"} </List>
 
             <Typography variant="h6">Physical Characteristics:</Typography> 
             <List>

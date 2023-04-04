@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import { Link } from '@mui/material';
 
 
+
 const PokemonList = () => {
 
     function createData(name, url) {
@@ -40,18 +41,18 @@ const PokemonList = () => {
     // display data
     return (
         
-        <TableContainer component={Paper} style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
+        <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
+                <TableHead sx={{ backgroundColor: '#CFFFFF' }}>
                     <TableRow>
-                        <TableCell>POKEMON NAME</TableCell>  
+                        <TableCell>LIST OF POKEMONS</TableCell>  
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {rowsTable.map((row) => (
                         <TableRow 
                             key={row.name}
-                            sx={{ '&:last-child td, &:last-child th': { border: 100 } }}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
                                 <Link href={'./' + row.name}>{row.name}</Link>
@@ -62,6 +63,7 @@ const PokemonList = () => {
                 </TableBody>
             </Table>
         </TableContainer>
+        
     )
 }
 
