@@ -41,11 +41,11 @@ const PokemonList = () => {
     // display data
     return (
         
-        <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }}>
+        <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }} >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead sx={{ backgroundColor: '#CFFFFF' }}>
                     <TableRow>
-                        <TableCell>LIST OF POKEMONS</TableCell>  
+                        <TableCell>Pick a Pokemon!</TableCell>  
                     </TableRow>
                 </TableHead>
                 <TableBody>

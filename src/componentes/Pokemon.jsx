@@ -45,7 +45,7 @@ const Pokemon = () => {
       setPokeSprites(res.data.sprites)
     }
     ).catch((err) => {
-      console.log("error", err);
+      console.log("Can't get Pokemon", err);
     })
   }, [params.id])
 
@@ -60,7 +60,7 @@ const Pokemon = () => {
       setPokeSpecies(res.data)
     }
     ).catch((err) => {
-      console.log("error", err);
+      console.log("Can't get Pokemon Species", err);
     })
   }, [idSpecies])
   
@@ -76,7 +76,7 @@ const Pokemon = () => {
       setPokeSecondEvolve(res.data.chain.evolves_to[0] ? res.data.chain.evolves_to[0].evolves_to : "")      
     }
     ).catch((err) => {
-      console.log("error!!!", err);
+      console.log("Can't get Pokemon chain", err);
     })
   }, [idChain])
 
@@ -91,21 +91,21 @@ const Pokemon = () => {
   // show arrays into a list (evolutions, abilities, and moves)
   const listEvolutions = pokeEvolutions.map((pokeEvolution, i) => 
   <ListItem disablePadding key={i}>
-    <ListItemButton component="a" href={'.././' + pokeEvolution}>
+    <ListItemButton autoFocus={pokeEvolution===Poke.name} component="a" href={'.././' + pokeEvolution}>
       <ListItemText primary={pokeEvolution} />
     </ListItemButton>
   </ListItem> )
 
   const listAbilities = pokeAbilities.map((pokeAbility, i) => 
     <ListItem disablePadding key={i}>
-      <ListItemButton>
+      <ListItemButton dense={true}>
         <ListItemText primary={pokeAbility.ability.name} />
       </ListItemButton>
     </ListItem> )
 
   const listMoves = pokeMoves.map((pokeMove, i) => 
     <ListItem disablePadding key={i}>
-      <ListItemButton>
+      <ListItemButton dense={true} >
         <ListItemText primary={pokeMove.move.name} />
       </ListItemButton>
     </ListItem> )
@@ -125,12 +125,12 @@ const Pokemon = () => {
         <CardHeader 
           title={Poke.name}      
         />
-
+        
         <CardMedia
           component="img"
           height="194"
           image={pokeSprites.front_default}
-          alt={Poke.name}
+          alt='No image available'
         />
         
         <CardContent> 
@@ -141,7 +141,7 @@ const Pokemon = () => {
             <Typography variant="h6">Physical Characteristics:</Typography> 
             <List>
               <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton >
                 <ListItemText primary={pokeHeight}/>
                 </ListItemButton>
               </ListItem>
