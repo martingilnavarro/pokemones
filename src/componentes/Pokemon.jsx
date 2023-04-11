@@ -34,6 +34,7 @@ const Pokemon = () => {
   // set loading
   const [loadingPoke, setLoadingPoke] = useState(true);
   const [loadingChain, setLoadingChain] = useState(true);
+
   // evolutions
   const [pokeFirstSpecies, setPokeFirstSpecies] = useState({})
   const [pokeFirstEvolve, setPokeFirstEvolve] = useState([])
@@ -42,10 +43,7 @@ const Pokemon = () => {
   const params = useParams()
 
   // get Pokemon data from API
-  useEffect(() => {
-
-    
-
+  useEffect(() => {   
     getPokemon(params.id).then((res) => {
       setPoke(res.data)
       setPokeMoves(res.data.moves)
@@ -62,7 +60,7 @@ const Pokemon = () => {
 
   // get species id (need to obtain chain id) 
   const pokeSpecie = Poke.species
-  const idSpecies = pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : 1
+  const idSpecies = pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : ""
 
   // get Pokemon species data from API (needed to get chain id)
   useEffect(() => {
@@ -76,14 +74,14 @@ const Pokemon = () => {
   
   // get chain id
   const pokeEvolutionChain = pokeSpecies.evolution_chain
-  const idChain = pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : 1
+  const idChain = pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : ""
 
   // get Pokemon evolutions data from API
   useEffect(() => {
     getChain(idChain).then((res) => {     
-      setPokeFirstSpecies(res.data.chain.species)
-      setPokeFirstEvolve(res.data.chain.evolves_to)
-      setPokeSecondEvolve(res.data.chain.evolves_to[0] ? res.data.chain.evolves_to[0].evolves_to : "")      
+      setPokeFirstSpecies(idChain ? res.data.chain.species : "")
+      setPokeFirstEvolve(idChain ? res.data.chain.evolves_to : "")
+      setPokeSecondEvolve((idChain && res.data.chain.evolves_to[0]) ? res.data.chain.evolves_to[0].evolves_to : "")      
     }
     ).catch((err) => {
       console.log("Can't get Pokemon chain", err);
@@ -157,7 +155,7 @@ const Pokemon = () => {
         <CardContent> 
 
             <Typography variant="h6">Evolutions:</Typography>
-            <List> {pokeEvolutionChain ? listEvolutions: "None"} </List>
+            <List> {pokeEvolutionChain ? listEvolutions: ""} </List>
 
             <Typography variant="h6">Physical Characteristics:</Typography> 
             <List>

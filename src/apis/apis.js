@@ -9,11 +9,11 @@ const getPokemon = (id) => {
 }
 
 const getPokemonSpecies = (idSpecies) => {
-    return baseURL.get(`/pokemon-species/${idSpecies}/`)
+    return baseURL.get(`/pokemon-species/${idSpecies}`)
 }
 
 const getChain = (idChain) => {
-    return baseURL.get(`/evolution-chain/${idChain}/`)
+    return baseURL.get(`/evolution-chain/${idChain}`)
 }
 
 export {getAllPokemon}
