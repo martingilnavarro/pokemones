@@ -20,6 +20,9 @@ import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
 
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+
 
 const Pokemon = () => {
   const [Poke, setPoke] = useState({});
@@ -27,7 +30,10 @@ const Pokemon = () => {
   const [pokeMoves, setPokeMoves] = useState([])
   const [pokeAbilities, setPokeAbilities] = useState([])
   const [pokeSprites, setPokeSprites] = useState({})
-  
+
+  // set loading
+  const [loadingPoke, setLoadingPoke] = useState(true);
+  const [loadingChain, setLoadingChain] = useState(true);
   // evolutions
   const [pokeFirstSpecies, setPokeFirstSpecies] = useState({})
   const [pokeFirstEvolve, setPokeFirstEvolve] = useState([])
@@ -38,6 +44,8 @@ const Pokemon = () => {
   // get Pokemon data from API
   useEffect(() => {
 
+    
+
     getPokemon(params.id).then((res) => {
       setPoke(res.data)
       setPokeMoves(res.data.moves)
@@ -47,6 +55,8 @@ const Pokemon = () => {
     ).catch((err) => {
       console.log("Can't get Pokemon", err);
     })
+
+    .finally(() => setLoadingPoke(false))
   }, [params.id])
 
 
@@ -78,6 +88,8 @@ const Pokemon = () => {
     ).catch((err) => {
       console.log("Can't get Pokemon chain", err);
     })
+    .finally(() => setLoadingChain(false))
+    
   }, [idChain])
 
 
@@ -97,27 +109,36 @@ const Pokemon = () => {
   </ListItem> )
 
   const listAbilities = pokeAbilities.map((pokeAbility, i) => 
-    <ListItem disablePadding key={i}>
-      <ListItemButton dense={true}>
-        <ListItemText primary={pokeAbility.ability.name} />
-      </ListItemButton>
+    <ListItem key={i}>    
+        <ListItemText primary={pokeAbility.ability.name} />     
     </ListItem> )
 
   const listMoves = pokeMoves.map((pokeMove, i) => 
-    <ListItem disablePadding key={i}>
-      <ListItemButton dense={true} >
+    <ListItem  key={i}>
         <ListItemText primary={pokeMove.move.name} />
-      </ListItemButton>
     </ListItem> )
 
   const pokeHeight = `Height: ${Poke.height}`
   const pokeWeight = `Weight: ${Poke.weight}`
  
+  
  
   return (
 
+    (loadingPoke || loadingChain) ? (
+      
+      <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
+        
+        <Box sx={{ display: 'flex' }}>
+          <CircularProgress />
+        </Box>
+      </Grid>
+    ) : (
+
     <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
       
+      
+
       <Button size="small" href='../' >Return to list</Button>
 
       <Card sx={{ maxWidth: 275}}> 
@@ -140,15 +161,11 @@ const Pokemon = () => {
 
             <Typography variant="h6">Physical Characteristics:</Typography> 
             <List>
-              <ListItem disablePadding>
-                <ListItemButton >
+              <ListItem>
                 <ListItemText primary={pokeHeight}/>
-                </ListItemButton>
               </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton>
+              <ListItem >
                 <ListItemText primary={pokeWeight}/>
-                </ListItemButton>
               </ListItem>
             </List>
 
@@ -161,7 +178,7 @@ const Pokemon = () => {
         </CardContent>
       </Card>
     </Grid>
-
+    )
   );
 }
 
