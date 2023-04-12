@@ -41,7 +41,7 @@ const Pokemon = () => {
   const [pokeSecondEvolve, setPokeSecondEvolve] = useState([])
  
   const params = useParams()
-
+  
   // get Pokemon data from API
   useEffect(() => {   
     getPokemon(params.id).then((res) => {
