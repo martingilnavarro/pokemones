@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllPokemon } from '../apis/apis';
-import Content from './Content'
+
 
 //import material UI
 import Table from '@mui/material/Table';
@@ -10,7 +10,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Link } from '@mui/material';
+import { Link as LinkUI} from '@mui/material' ;
+import { Link, useLocation } from 'react-router-dom';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
 
 
 
@@ -23,16 +26,22 @@ const PokemonList = () => {
     const [listPoke, setListPoke] = useState([]);
     const [rowsTable, setRowsTable] = useState([]);
 
+    // pagination
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const page = parseInt(query.get('page') || '1', 10);
+    
+
     
 
     // get list of Pokemons from API  
     useEffect(() => {
-        getAllPokemon().then((res) =>
+        getAllPokemon(page).then((res) =>
             setListPoke(res.data.results)
         ).catch((err) => {
             console.log("error", err)
         })
-    }, [])
+    }, [page])
 
     //set data in table row
     useEffect(() => {
@@ -43,9 +52,18 @@ const PokemonList = () => {
 
     // display data
     return (
-        <>
-        <Content 
-        />
+    <>
+         <Pagination
+            page={page}
+            count={64}
+            renderItem={(item) => (
+            <PaginationItem
+                component={Link}
+                to={`${item.page === 1 ? '' : `?page=${item.page}`}`}
+                {...item}
+            />
+            )}
+         />
         <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }} >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead sx={{ backgroundColor: '#CFFFFF' }}>
@@ -60,7 +78,7 @@ const PokemonList = () => {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
-                                <Link href={'./' + row.name}>{row.name}</Link>
+                                <LinkUI href={'./' + row.name}>{row.name}</LinkUI>
                             </TableCell>
 
                         </TableRow>
@@ -68,7 +86,7 @@ const PokemonList = () => {
                 </TableBody>
             </Table>
         </TableContainer>
-        </>
+    </>
     )
 }
 

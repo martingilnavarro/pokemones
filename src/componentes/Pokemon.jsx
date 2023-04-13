@@ -30,6 +30,7 @@ const Pokemon = () => {
   const [pokeMoves, setPokeMoves] = useState([])
   const [pokeAbilities, setPokeAbilities] = useState([])
   const [pokeSprites, setPokeSprites] = useState({})
+  const [pokeSpritesAlt, setPokeSpritesAlt] = useState({})
 
   // set loading
   const [loadingPoke, setLoadingPoke] = useState(true);
@@ -48,7 +49,8 @@ const Pokemon = () => {
       setPoke(res.data)
       setPokeMoves(res.data.moves)
       setPokeAbilities(res.data.abilities)
-      setPokeSprites(res.data.sprites)
+      setPokeSprites(res.data.sprites.other.home)
+      setPokeSpritesAlt(res.data.sprites)
     }
     ).catch((err) => {
       console.log("Can't get Pokemon", err);
@@ -90,7 +92,7 @@ const Pokemon = () => {
     
   }, [idChain])
 
-
+  
   // push evolutions in an array 
   const pokeEvolutions = [];
   pokeEvolutions.push(pokeFirstSpecies.name)
@@ -148,7 +150,7 @@ const Pokemon = () => {
         <CardMedia
           component="img"
           height="194"
-          image={pokeSprites.front_default}
+          image={pokeSprites.front_default || pokeSpritesAlt.front_default}
           alt='No image available'
         />
         
