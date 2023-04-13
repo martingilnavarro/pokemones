@@ -19,6 +19,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
@@ -63,7 +64,6 @@ const Pokemon = () => {
   // get species id (need to obtain chain id) 
   const pokeSpecie = Poke.species
   const idSpecies = pokeSpecie ? pokeSpecie.url.slice(42, pokeSpecie.url.length-1) : ""
-
   // get Pokemon species data from API (needed to get chain id)
   useEffect(() => {
     getPokemonSpecies(idSpecies).then((res) => {
@@ -77,7 +77,6 @@ const Pokemon = () => {
   // get chain id
   const pokeEvolutionChain = pokeSpecies.evolution_chain
   const idChain = pokeEvolutionChain ? pokeEvolutionChain.url.slice(42, pokeEvolutionChain.url.length-1) : ""
-
   // get Pokemon evolutions data from API
   useEffect(() => {
     getChain(idChain).then((res) => {     
@@ -88,25 +87,33 @@ const Pokemon = () => {
     ).catch((err) => {
       console.log("Can't get Pokemon chain", err);
     })
-    .finally(() => setLoadingChain(false))
-    
+    .finally(() => setLoadingChain(false)) 
   }, [idChain])
 
   
-  // push evolutions in an array 
-  const pokeEvolutions = [];
-  pokeEvolutions.push(pokeFirstSpecies.name)
-  for(let i=0; pokeFirstEvolve[i]; i++) {pokeFirstEvolve[i] && pokeEvolutions.push(pokeFirstEvolve[i].species.name)}
-  for(let j=0; pokeSecondEvolve[j]; j++) {pokeSecondEvolve[j] && pokeEvolutions.push(pokeSecondEvolve[j].species.name)}
+  // push evolutions in arrays
+  const pokeInitialEvolutions = [];
+  pokeInitialEvolutions.push(pokeFirstSpecies.name)
+
+  const pokeMediumEvolutions = [];
+  for(let i=0; pokeFirstEvolve[i]; i++) {pokeFirstEvolve[i] && pokeMediumEvolutions.push(pokeFirstEvolve[i].species.name)}
+
+  const pokeFinalEvolutions = [];
+  for(let j=0; pokeSecondEvolve[j]; j++) {pokeSecondEvolve[j] && pokeFinalEvolutions.push(pokeSecondEvolve[j].species.name)}
 
   
   // show arrays into a list (evolutions, abilities, and moves)
-  const listEvolutions = pokeEvolutions.map((pokeEvolution, i) => 
+
+  const listEvolutions = (list) => list.map((pokeEvolution, i) => 
   <ListItem disablePadding key={i}>
     <ListItemButton autoFocus={pokeEvolution===Poke.name} component="a" href={'.././' + pokeEvolution}>
       <ListItemText primary={pokeEvolution} />
     </ListItemButton>
   </ListItem> )
+  const listInitialEvolutions = listEvolutions(pokeInitialEvolutions)
+  const listMediumEvolutions = listEvolutions(pokeMediumEvolutions)
+  const listFinalEvolutions = listEvolutions(pokeFinalEvolutions)
+
 
   const listAbilities = pokeAbilities.map((pokeAbility, i) => 
     <ListItem key={i}>    
@@ -118,6 +125,7 @@ const Pokemon = () => {
         <ListItemText primary={pokeMove.move.name} />
     </ListItem> )
 
+  //Physical Characteristics 
   const pokeHeight = `Height: ${Poke.height}`
   const pokeWeight = `Weight: ${Poke.weight}`
  
@@ -136,9 +144,7 @@ const Pokemon = () => {
     ) : (
 
     <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
-      
-      
-
+          
       <Button size="small" href='../' >Return to list</Button>
 
       <Card sx={{ maxWidth: 275}}> 
@@ -156,8 +162,13 @@ const Pokemon = () => {
         
         <CardContent> 
 
-            <Typography variant="h6">Evolutions:</Typography>
-            <List> {pokeEvolutionChain ? listEvolutions: ""} </List>
+            <Typography variant="h6">Evolution Chain:</Typography>
+            
+            <List> {pokeEvolutionChain ? listInitialEvolutions: ""} </List>
+            <Divider textAlign="left">{listMediumEvolutions[0] && 'Evolves to'}</Divider>
+            <List> {pokeEvolutionChain ? listMediumEvolutions: ""} </List>
+            <Divider textAlign="left">{listFinalEvolutions[0] && 'Evolves to'}</Divider>
+            <List> {pokeEvolutionChain ? listFinalEvolutions: ""} </List>
 
             <Typography variant="h6">Physical Characteristics:</Typography> 
             <List>
