@@ -32,8 +32,6 @@ const PokemonList = () => {
     const page = parseInt(query.get('page') || '1', 10);
     
 
-    
-
     // get list of Pokemons from API  
     useEffect(() => {
         getAllPokemon(page).then((res) =>
