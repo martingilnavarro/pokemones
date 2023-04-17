@@ -99,7 +99,7 @@ const Pokemon = () => {
   for(let i=0; pokeFirstEvolve[i]; i++) {pokeFirstEvolve[i] && pokeMediumEvolutions.push(pokeFirstEvolve[i].species.name)}
 
   const pokeFinalEvolutions = [];
-  for(let j=0; pokeSecondEvolve[j]; j++) {pokeSecondEvolve[j] && pokeFinalEvolutions.push(pokeSecondEvolve[j].species.name)}
+  for(let i=0; pokeSecondEvolve[i]; i++) {pokeSecondEvolve[i] && pokeFinalEvolutions.push(pokeSecondEvolve[i].species.name)}
 
   
   // show arrays into a list (evolutions, abilities, and moves)

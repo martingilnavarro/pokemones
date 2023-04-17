@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom'
-import Home from './pages/home/home';
-import Info from './pages/home/info';
+import PokemonList from './componentes/PokemonList.jsx'
+import Pokemon from './componentes/Pokemon.jsx'
 
 function App() {
   return (
     <Routes>
-        <Route exact path='/' element={<Home />} />
-        <Route exact path='/:id' element={<Info />} />
+        <Route exact path='/' element={<PokemonList />} />
+        <Route exact path='/:id' element={<Pokemon />} />
     </Routes>
   );
 }
