@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Loader from './Loader'
 
 //import gets from apis
 import { getPokemon } from '../apis/apis';
@@ -20,9 +21,6 @@ import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
-
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 
 
 const Pokemon = () => {
@@ -134,13 +132,7 @@ const Pokemon = () => {
   return (
 
     (loadingPoke || loadingChain) ? (
-      
-      <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
-        
-        <Box sx={{ display: 'flex' }}>
-          <CircularProgress />
-        </Box>
-      </Grid>
+      <Loader />
     ) : (
 
     <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
