@@ -58,7 +58,7 @@ const PokemonList = () => {
     <>
          <Pagination
             page={page}
-            count={Math.floor(countPoke / 20)}
+            count={Math.ceil(countPoke / 20)}
             renderItem={(item) => (
             <PaginationItem
                 component={Link}
