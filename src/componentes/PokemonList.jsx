@@ -19,13 +19,9 @@ import PaginationItem from '@mui/material/PaginationItem';
 
 const PokemonList = () => {
 
-    function createData(name, url) {
-        return { name, url };
-    }
-
     const [listPoke, setListPoke] = useState([]);
     const [countPoke, setCountPoke] = useState(0);
-    const [rowsTable, setRowsTable] = useState([]);
+
 
     // pagination
     const location = useLocation();
@@ -43,15 +39,7 @@ const PokemonList = () => {
         })
     }, [page])
 
-    
 
-
-    //set data in table row
-    useEffect(() => {
-        setRowsTable(listPoke.map((poke) => {
-            return createData(poke.name, poke.url)
-        }))
-    }, [listPoke])
 
     // display data
     return (
@@ -75,13 +63,13 @@ const PokemonList = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rowsTable.map((row) => (
+                    {listPoke.map((poke) => (
                         <TableRow 
-                            key={row.name}
+                            key={poke.name}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
-                                <LinkUI href={'./' + row.name}>{row.name}</LinkUI>
+                                <LinkUI href={'./' + poke.name}>{poke.name}</LinkUI>
                             </TableCell>
 
                         </TableRow>
