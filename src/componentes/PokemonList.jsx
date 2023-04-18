@@ -24,6 +24,7 @@ const PokemonList = () => {
     }
 
     const [listPoke, setListPoke] = useState([]);
+    const [countPoke, setCountPoke] = useState(0);
     const [rowsTable, setRowsTable] = useState([]);
 
     // pagination
@@ -34,12 +35,16 @@ const PokemonList = () => {
 
     // get list of Pokemons from API  
     useEffect(() => {
-        getAllPokemon(page).then((res) =>
+        getAllPokemon(page).then((res) => {
             setListPoke(res.data.results)
+            setCountPoke(res.data.count)}
         ).catch((err) => {
             console.log("error", err)
         })
     }, [page])
+
+    
+
 
     //set data in table row
     useEffect(() => {
@@ -53,7 +58,7 @@ const PokemonList = () => {
     <>
          <Pagination
             page={page}
-            count={64}
+            count={Math.floor(countPoke / 20)}
             renderItem={(item) => (
             <PaginationItem
                 component={Link}
