@@ -98,13 +98,13 @@ const Pokemon = () => {
 
   
   // push evolutions in arrays
-  const pokeInitialEvolutions = [];
+  const pokeInitialEvolutions : Array<string> = [];
   pokeInitialEvolutions.push(pokeFirstSpecies)
 
-  const pokeMediumEvolutions = [];
+  const pokeMediumEvolutions : Array<string> = [];
   for(let i=0; pokeFirstEvolve[i]; i++) {pokeFirstEvolve[i] && pokeMediumEvolutions.push(pokeFirstEvolve[i].species.name)}
 
-  const pokeFinalEvolutions = [];
+  const pokeFinalEvolutions : Array<string> = [];
   for(let i=0; pokeSecondEvolve[i]; i++) {pokeSecondEvolve[i] && pokeFinalEvolutions.push(pokeSecondEvolve[i].species.name)}
 
   
