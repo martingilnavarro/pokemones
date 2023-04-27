@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useQuery, gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { getAllPokemon } from '../apis/apis';
-
 
 //import material UI
 import Table from '@mui/material/Table';
@@ -16,11 +16,51 @@ import { Link, useLocation } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 
+const GET_POKEMONS = gql`
+    query samplePokeAPIquery {
+    pokemons: pokemon_v2_pokemonspecies(offset: 1, limit: 20, order_by: {id: asc}) {
+      name
+      id
+    } 
+  }
+  `;
 
+  function DisplayLocations() {
+    const { loading, error, data } = useQuery(GET_POKEMONS);
+  
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :</p>;
+    return (
+        <>
+             
+            <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }} >
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead sx={{ backgroundColor: '#CFFFFF' }}>
+                        <TableRow>
+                            <TableCell>Pick a Pokemon!</TableCell>  
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.pokemons.map(({id, name}) => (
+                            <TableRow 
+                                key={id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    <LinkUI href={'./' + name}>{name}</LinkUI>
+                                </TableCell>
+    
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </>
+        );
+  }
 
 const PokemonList = () => {
 
-    const [listPoke, setListPoke] = useState([]);
     const [countPoke, setCountPoke] = useState(0);
 
 
@@ -33,7 +73,6 @@ const PokemonList = () => {
     // get list of Pokemons from API  
     useEffect(() => {
         getAllPokemon(page).then((res) => {
-            setListPoke(res.data.results)
             setCountPoke(res.data.count)}
         ).catch((err) => {
             console.log("error", err)
@@ -56,28 +95,8 @@ const PokemonList = () => {
             />
             )}
          />
-        <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }} >
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead sx={{ backgroundColor: '#CFFFFF' }}>
-                    <TableRow>
-                        <TableCell>Pick a Pokemon!</TableCell>  
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {listPoke.map((poke) => (
-                        <TableRow 
-                            key={poke.name}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                <LinkUI href={'./' + poke.name}>{poke.name}</LinkUI>
-                            </TableCell>
-
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+         <DisplayLocations />
+        
     </>
     )
 }

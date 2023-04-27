@@ -73,7 +73,7 @@ const Pokemon = () => {
   // get Pokemon species data from API (needed to get chain id)
   useEffect(() => {
     getPokemonSpecies(idSpecies).then((res) => {
-      setPokeChainUrl(res.data.evolution_chain.url)
+      setPokeChainUrl(idSpecies ? res.data.evolution_chain.url : "")
     }
     ).catch((err) => {
       console.log("Can't get Pokemon Species", err);
