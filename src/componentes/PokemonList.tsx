@@ -17,21 +17,23 @@ import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 
 const GET_POKEMONS = gql`
-    query samplePokeAPIquery {
-    pokemons: pokemon_v2_pokemonspecies(offset: 1, limit: 20, order_by: {id: asc}) {
-      name
-      id
-    } 
-  }
+    query GetPokemons($pageNumber: Int!) {
+        pokemons: pokemon_v2_pokemon(offset: $pageNumber, limit: 20, order_by: {id: asc}) {
+            name 
+            id
+        } 
+    }
   `;
 
-  function DisplayLocations() {
-    const { loading, error, data } = useQuery(GET_POKEMONS);
+  function DisplayPokemons( {pageNumber} ) {
+    const { loading, error, data } = useQuery(GET_POKEMONS, {
+        variables: {pageNumber},
+    });
   
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :</p>;
     return (
-        <>
+        
              
             <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }} >
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -55,7 +57,7 @@ const GET_POKEMONS = gql`
                     </TableBody>
                 </Table>
             </TableContainer>
-        </>
+        
         );
   }
 
@@ -70,23 +72,13 @@ const PokemonList = () => {
     const page = parseInt(query.get('page') || '1', 10);
     
 
-    // get list of Pokemons from API  
-    useEffect(() => {
-        getAllPokemon(page).then((res) => {
-            setCountPoke(res.data.count)}
-        ).catch((err) => {
-            console.log("error", err)
-        })
-    }, [page])
-
-
 
     // display data
     return (
     <>
          <Pagination
             page={page}
-            count={Math.ceil(countPoke / 20)}
+            count={64}
             renderItem={(item) => (
             <PaginationItem
                 component={Link}
@@ -95,7 +87,7 @@ const PokemonList = () => {
             />
             )}
          />
-         <DisplayLocations />
+         <DisplayPokemons pageNumber = {(page-1)*20}/>
         
     </>
     )

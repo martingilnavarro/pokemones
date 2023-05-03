@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import Loader from './Loader'
+import { useQuery, gql } from '@apollo/client';
 
 //import gets from apis
 import { getPokemon } from '../apis/apis';
@@ -23,7 +24,85 @@ import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 
+const GET_POKEMON = gql`
+    query GetPokemon($pokeName: String!) {
+        pokemon: pokemon_v2_pokemon(offset: 0, limit: 2000, where: {name: {_eq: $pokeName}}, order_by: {id: asc}) {
+            name 
+            id
+            height
+            pokemon_species_id
+            weight
+            pokemon_v2_pokemonabilities {
+              pokemon_v2_ability {
+                id
+                name
+              }
+            }
+            
+          
+        } 
+    }
+  `;
 
+function DisplayPokemon( {pokeName}) {
+  const { loading, error, data } = useQuery(GET_POKEMON, {
+    variables: {pokeName},
+  });
+  
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : ${error.message}</p>;
+    return (
+      <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
+          
+      <Button size="small" href='../' >Return to list</Button>
+
+      <Card sx={{ maxWidth: 275}}> 
+          
+        <CardHeader 
+          title={data.pokemon[0].name}      
+        />
+        
+        
+      
+        <CardContent> 
+
+            
+
+            <Typography variant="h6">Height:</Typography> 
+            <List>
+              <ListItem>
+                <ListItemText primary={data.pokemon[0].height}/>
+              </ListItem>
+            </List>
+            <Typography variant="h6">Weight:</Typography> 
+            <List>
+              <ListItem>
+                <ListItemText primary={data.pokemon[0].weight}/>
+              </ListItem>
+            </List>
+            
+
+            <Typography variant="h6">Abilities:</Typography> 
+            <List>
+              {data.pokemon[0].pokemon_v2_pokemonabilities.map(({pokemon_v2_ability}) => (
+                <ListItem key={pokemon_v2_ability.id}>    
+                  <ListItemText primary={pokemon_v2_ability.name} />     
+                </ListItem> 
+              ))}
+            </List>
+
+            
+
+            
+              
+        </CardContent>
+      </Card>
+    </Grid>
+    )
+}
+
+  
 
 const Pokemon = () => {
   const [pokeName, setPokeName] = useState("");
@@ -49,6 +128,7 @@ const Pokemon = () => {
   
   // get Pokemon data from API
   useEffect(() => {   
+
     getPokemon(params.id).then((res) => {
       setPokeName(res.data.name)
       setPokeHeight(res.data.height)
@@ -139,6 +219,11 @@ const Pokemon = () => {
       <Loader />
     ) : (
 
+    <>
+    <DisplayPokemon pokeName = {params.id} />
+
+    {/*
+
     <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
           
       <Button size="small" href='../' >Return to list</Button>
@@ -185,6 +270,8 @@ const Pokemon = () => {
         </CardContent>
       </Card>
     </Grid>
+    {*/}
+    </>
     )
   );
 }
