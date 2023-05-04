@@ -26,7 +26,7 @@ import Divider from '@mui/material/Divider';
 
 const GET_POKEMON = gql`
     query GetPokemon($pokeName: String!) {
-        pokemon: pokemon_v2_pokemon(offset: 0, limit: 2000, where: {name: {_eq: $pokeName}}, order_by: {id: asc}) {
+        pokemon: pokemon_v2_pokemon(where: {name: {_eq: $pokeName}}) {
             name 
             id
             height
@@ -38,13 +38,22 @@ const GET_POKEMON = gql`
                 name
               }
             }
+            pokemon_v2_pokemonsprites {
+              sprites
+            }
+            pokemon_v2_pokemontypes {
+              pokemon_v2_type {
+                id
+                name
+              }
+            }
             
           
         } 
     }
   `;
 
-function DisplayPokemon( {pokeName}) {
+function DisplayPokemon( {pokeName} ) {
   const { loading, error, data } = useQuery(GET_POKEMON, {
     variables: {pokeName},
   });
@@ -63,11 +72,16 @@ function DisplayPokemon( {pokeName}) {
           title={data.pokemon[0].name}      
         />
         
+        <CardMedia
+          component="img"
+          height="194"
+          image= 'https://beta.pokeapi.co/graphql/v1beta/media/sprites/pokemon/1.png/'
+          alt='No image available'
+        />
         
       
         <CardContent> 
 
-            
 
             <Typography variant="h6">Height:</Typography> 
             <List>
@@ -88,6 +102,15 @@ function DisplayPokemon( {pokeName}) {
               {data.pokemon[0].pokemon_v2_pokemonabilities.map(({pokemon_v2_ability}) => (
                 <ListItem key={pokemon_v2_ability.id}>    
                   <ListItemText primary={pokemon_v2_ability.name} />     
+                </ListItem> 
+              ))}
+            </List>
+
+            <Typography variant="h6">Types:</Typography> 
+            <List>
+              {data.pokemon[0].pokemon_v2_pokemontypes.map(({pokemon_v2_type}) => (
+                <ListItem key={pokemon_v2_type.id}>    
+                  <ListItemText primary={pokemon_v2_type.name} />     
                 </ListItem> 
               ))}
             </List>
