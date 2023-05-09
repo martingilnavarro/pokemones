@@ -1,12 +1,8 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import Loader from './Loader'
+
 import { useQuery, gql } from '@apollo/client';
 
 //import gets from apis
-import { getPokemon } from '../apis/apis';
-import { getPokemonSpecies } from '../apis/apis';
-import { getChain } from '../apis/apis';
 
 import { useParams } from 'react-router-dom';
 
@@ -30,26 +26,25 @@ const GET_POKEMON = gql`
             name 
             id
             height
-            pokemon_species_id
             weight
-            pokemon_v2_pokemonabilities {
-              pokemon_v2_ability {
+            abilities: pokemon_v2_pokemonabilities {
+              ability: pokemon_v2_ability {
                 id
                 name
               }
             }
-            pokemon_v2_pokemonsprites {
+            pokesprites: pokemon_v2_pokemonsprites {
               sprites
             }
-            pokemon_v2_pokemontypes {
-              pokemon_v2_type {
+            types: pokemon_v2_pokemontypes {
+              type: pokemon_v2_type {
                 id
                 name
               }
             }
-            pokemon_v2_pokemonspecy {
-              pokemon_v2_evolutionchain {
-                pokemon_v2_pokemonspecies {
+            specy: pokemon_v2_pokemonspecy {
+              evolutionchain: pokemon_v2_evolutionchain {
+                species: pokemon_v2_pokemonspecies {
                   name
                   id
                 }
@@ -65,8 +60,9 @@ function DisplayPokemon( {pokeName} ) {
   const { loading, error, data } = useQuery(GET_POKEMON, {
     variables: {pokeName},
   });
+  
 
-  const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${1}.png`
+
   
 
   if (loading) return <p>Loading...</p>;
@@ -85,13 +81,27 @@ function DisplayPokemon( {pokeName} ) {
         <CardMedia
           component="img"
           height="194"
-          image= {img}
+          image= {((JSON.parse(data.pokemon[0].pokesprites[0].sprites)).front_default)
+            .replace("/media", "https://raw.githubusercontent.com/PokeAPI/sprites/master/")}
           alt='No image available'
         />
         
       
         <CardContent> 
 
+
+            
+
+            <Typography variant="h6">Evolution Chain:</Typography> 
+            <List>
+              {data.pokemon[0].specy.evolutionchain.species.map(({id, name}) => (
+                <ListItem disablePadding key={id}> 
+                  <ListItemButton autoFocus={name===data.pokemon[0].name}component="a" href={'.././' + name}>  
+                  <ListItemText primary={name} />  
+                  </ListItemButton> 
+                </ListItem>
+              ))}
+            </List>
 
             <Typography variant="h6">Height:</Typography> 
             <List>
@@ -105,33 +115,22 @@ function DisplayPokemon( {pokeName} ) {
                 <ListItemText primary={data.pokemon[0].weight}/>
               </ListItem>
             </List>
-
-            <Typography variant="h6">Evolution Chain:</Typography> 
-            <List>
-              {data.pokemon[0].pokemon_v2_pokemonspecy.pokemon_v2_evolutionchain.pokemon_v2_pokemonspecies.map(({id, name}) => (
-                <ListItem disablePadding key={id}> 
-                  <ListItemButton autoFocus={name===data.pokemon[0].name}component="a" href={'.././' + name}>  
-                  <ListItemText primary={name} />  
-                  </ListItemButton> 
-                </ListItem>
-              ))}
-            </List>
             
 
             <Typography variant="h6">Abilities:</Typography> 
             <List>
-              {data.pokemon[0].pokemon_v2_pokemonabilities.map(({pokemon_v2_ability}) => (
-                <ListItem key={pokemon_v2_ability.id}>    
-                  <ListItemText primary={pokemon_v2_ability.name} />     
+              {data.pokemon[0].abilities.map(({ability}) => (
+                <ListItem key={ability.id}>    
+                  <ListItemText primary={ability.name} />     
                 </ListItem> 
               ))}
             </List>
 
             <Typography variant="h6">Types:</Typography> 
             <List>
-              {data.pokemon[0].pokemon_v2_pokemontypes.map(({pokemon_v2_type}) => (
-                <ListItem key={pokemon_v2_type.id}>    
-                  <ListItemText primary={pokemon_v2_type.name} />     
+              {data.pokemon[0].types.map(({type}) => (
+                <ListItem key={type.id}>    
+                  <ListItemText primary={type.name} />     
                 </ListItem> 
               ))}
             </List>
