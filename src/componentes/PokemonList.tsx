@@ -121,7 +121,6 @@ const PokemonList = () => {
 
     // pagination
     
-
     const [age, setAge] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {
