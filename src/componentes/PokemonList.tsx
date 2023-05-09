@@ -45,7 +45,7 @@ const GET_POKEMONS = gql`
                 }
               }
         } 
-        pokemonsCount: pokemon_v2_pokemon_aggregate {
+        pokemonsCount: pokemon_v2_pokemon_aggregate (where: {weight: {_gte: $minWeight, _lte: $maxWeight}, name: {_ilike: $searchName}}) {
             aggregate {
               count
             }
@@ -57,10 +57,27 @@ const GET_POKEMONS = gql`
     const { loading, error, data } = useQuery(GET_POKEMONS, {
         variables: {pageNumber, searchName, minWeight, maxWeight}, 
     });
+
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const page = parseInt(query.get('page') || '1', 10);
   
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :</p>;
     return (
+        <>
+
+    <Pagination
+            page={page}
+            count={Math.ceil((data.pokemonsCount.aggregate.count)/20)}
+            renderItem={(item) => (
+            <PaginationItem
+                component={Link}
+                to={`${item.page === 1 ? '' : `?page=${item.page}`}`}
+                {...item}
+            />
+            )}
+         />
         
              
             <TableContainer component={Paper} sx={{ backgroundColor: '#FAFFFF' }} >
@@ -95,6 +112,7 @@ const GET_POKEMONS = gql`
                 </Table>
             </TableContainer>
         
+            </>
         );
   }
 
@@ -102,15 +120,17 @@ const PokemonList = () => {
 
 
     // pagination
-    const location = useLocation();
-    const query = new URLSearchParams(location.search);
-    const page = parseInt(query.get('page') || '1', 10);
+    
 
     const [age, setAge] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
   };
+
+  const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const page = parseInt(query.get('page') || '1', 10);
     
 
     // display data
@@ -140,18 +160,8 @@ const PokemonList = () => {
         </Select>
         </FormControl>
 
-         <Pagination
-            page={page}
-            count={64}
-            renderItem={(item) => (
-            <PaginationItem
-                component={Link}
-                to={`${item.page === 1 ? '' : `?page=${item.page}`}`}
-                {...item}
-            />
-            )}
-         />
-         <DisplayPokemons pageNumber = {(page-1)*20} searchName = "a%" minWeight={40} maxWeight={500}/>
+         
+         <DisplayPokemons pageNumber = {(page-1)*20} searchName = "a%" minWeight={40} maxWeight={2000}/>
         
     </>
     )

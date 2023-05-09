@@ -57,6 +57,8 @@ function DisplayPokemon( {pokeName} ) {
   const { loading, error, data } = useQuery(GET_POKEMON, {
     variables: {pokeName},
   });
+
+  const img = "https://beta.pokeapi.co/graphql/v1beta/media/sprites/pokemon/1.png"
   
 
   if (loading) return <p>Loading...</p>;
@@ -75,7 +77,7 @@ function DisplayPokemon( {pokeName} ) {
         <CardMedia
           component="img"
           height="194"
-          image= 'https://beta.pokeapi.co/graphql/v1beta/media/sprites/pokemon/1.png/'
+          image= {img}
           alt='No image available'
         />
         
