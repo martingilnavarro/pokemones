@@ -18,15 +18,13 @@ import TextField from '@mui/material/TextField';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Box from '@mui/material/Box';
+
 
 const GET_POKEMONS = gql`
     query GetPokemons($pageNumber: Int!, $searchName: String, $minWeight: Int!, $maxWeight: Int!) {
         pokemons: pokemon_v2_pokemon(offset: $pageNumber, limit: 20, 
-            order_by: {name: asc}, where: {weight: {_gte: $minWeight, _lte: $maxWeight}, name: {_ilike: $searchName}}) {
+            order_by: {id: asc}, where: {weight: {_gte: $minWeight, _lte: $maxWeight}, name: {_ilike: $searchName}}) {
             name 
             id
             weight
@@ -119,48 +117,49 @@ const GET_POKEMONS = gql`
 const PokemonList = () => {
 
 
-    // pagination
-    
-    const [age, setAge] = React.useState('');
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
-  };
 
   const location = useLocation();
-    const query = new URLSearchParams(location.search);
-    const page = parseInt(query.get('page') || '1', 10);
+  const query = new URLSearchParams(location.search);
+  const page = parseInt(query.get('page') || '1', 10);
+
+  const [minWeight, setMinWeight] = React.useState("")
+  const [maxWeight, setMaxWeight] = React.useState("")
+  const [searchName, setSearchName] = React.useState("")
+  
+
     
 
     // display data
     return (
     <>
-        <TextField id="outlined-basic" label="Search" variant="outlined" defaultValue={'a'}/>
-        <TextField id="outlined-basic2" label="Min Weight" variant="outlined" defaultValue={40} />
-        <TextField id="outlined-basic2" label="Max Weight" variant="outlined" defaultValue={500}/>
+        <Box
+      component="form"
+      sx={{
+        '& > :not(style)': { m: 1, width: '25ch' },
+      }}
+      noValidate
+      autoComplete="off"
+    >
+        <TextField id="outlined-basic" label="Pokemon Name" variant="outlined" defaultValue={searchName}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchName(event.target.value);
+              }}/>
+        <TextField id="outlined-basic2" label="Min Weight" variant="outlined" value={minWeight}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setMinWeight((event.target.value));
+          }} />
+        <TextField id="outlined-basic2" label="Max Weight" variant="outlined" defaultValue={maxWeight}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setMaxWeight((event.target.value));
+              }}/>
         <FormGroup>
-            <FormControlLabel control={<Checkbox />} label="Is baby" />
-            
-          
+            <FormControlLabel control={<Checkbox />} label="Is baby" /> 
         </FormGroup>
-        <FormControl fullWidth>
-         <InputLabel id="demo-simple-select-label">Color</InputLabel>
-        |<Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={age}
-            label="Color"
-            onChange={handleChange}
-            autoWidth
-         >
-            <MenuItem value={10}>Red</MenuItem>
-            <MenuItem value={20}>Blue</MenuItem>
-            <MenuItem value={30}>Yellow</MenuItem>
-        </Select>
-        </FormControl>
+        </Box>
 
          
-         <DisplayPokemons pageNumber = {(page-1)*20} searchName = "a%" minWeight={40} maxWeight={2000}/>
+         <DisplayPokemons pageNumber = {(page-1)*20} searchName = {"%".concat(searchName).concat("%")} 
+         minWeight={minWeight?minWeight:0} maxWeight={maxWeight?maxWeight:100000}/>
         
     </>
     )

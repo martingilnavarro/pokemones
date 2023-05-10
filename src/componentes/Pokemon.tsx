@@ -81,7 +81,7 @@ function DisplayPokemon( {pokeName} ) {
         <CardMedia
           component="img"
           height="194"
-          image= {((JSON.parse(data.pokemon[0].pokesprites[0].sprites)).front_default)
+          image= {((JSON.parse(data.pokemon[0].pokesprites[0].sprites)).other.home.front_default)
             .replace("/media", "https://raw.githubusercontent.com/PokeAPI/sprites/master/")}
           alt='No image available'
         />
