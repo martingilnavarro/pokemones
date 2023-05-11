@@ -19,31 +19,37 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+
 
 
 const GET_POKEMONS = gql`
-    query GetPokemons($pageNumber: Int!, $searchName: String, $minWeight: Int!, $maxWeight: Int!) {
+    query GetPokemons($pageNumber: Int!, $searchName: String, $minWeight: Int!, $maxWeight: Int!, $color: String) {
         pokemons: pokemon_v2_pokemon(offset: $pageNumber, limit: 20, 
-            order_by: {id: asc}, where: {weight: {_gte: $minWeight, _lte: $maxWeight}, name: {_ilike: $searchName}}) {
+            order_by: {id: asc}, where: {weight: {_gte: $minWeight, _lte: $maxWeight}, 
+            name: {_ilike: $searchName}, pokemon_v2_pokemonspecy: {pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
             name 
             id
             weight
-            pokemon_species_id
-            pokemon_v2_pokemonspecy {
+            specy: pokemon_v2_pokemonspecy {
                 is_baby
-                pokemon_v2_pokemoncolor {
+                color: pokemon_v2_pokemoncolor {
                     id
                     name
                   }
             }
-            pokemon_v2_pokemontypes {
-                pokemon_v2_type {
+            types: pokemon_v2_pokemontypes {
+                type: pokemon_v2_type {
                   id
                   name
                 }
               }
         } 
-        pokemonsCount: pokemon_v2_pokemon_aggregate (where: {weight: {_gte: $minWeight, _lte: $maxWeight}, name: {_ilike: $searchName}}) {
+        pokemonsCount: pokemon_v2_pokemon_aggregate (where: {weight: {_gte: $minWeight, _lte: $maxWeight}, 
+            name: {_ilike: $searchName}, pokemon_v2_pokemonspecy: {pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
             aggregate {
               count
             }
@@ -51,9 +57,20 @@ const GET_POKEMONS = gql`
     }
   `;
 
-  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight} ) {
+  const GET_COLORS = gql`
+    query GetColor {
+        color: pokemon_v2_pokemoncolor {
+        name
+        id
+        }
+    }
+  `;
+
+
+
+  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight, color} ) {
     const { loading, error, data } = useQuery(GET_POKEMONS, {
-        variables: {pageNumber, searchName, minWeight, maxWeight}, 
+        variables: {pageNumber, searchName, minWeight, maxWeight, color}, 
     });
 
     const location = useLocation();
@@ -91,7 +108,7 @@ const GET_POKEMONS = gql`
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.pokemons.map(({id, name, weight, pokemon_v2_pokemonspecy, pokemon_v2_pokemontypes}) => (
+                        {data.pokemons.map(({id, name, weight, specy, types}) => (
                             <TableRow 
                                 key={id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -100,9 +117,9 @@ const GET_POKEMONS = gql`
                                     <LinkUI href={'./' + name}>{name}</LinkUI>
                                 </TableCell>
                                 <TableCell align="right">{weight}</TableCell>
-                                <TableCell align="right">{pokemon_v2_pokemonspecy.is_baby}</TableCell>
-                                <TableCell align="right">{pokemon_v2_pokemonspecy.pokemon_v2_pokemoncolor.name}</TableCell>
-                                <TableCell align="right">{pokemon_v2_pokemontypes[0].pokemon_v2_type.name}</TableCell>
+                                <TableCell align="right">{specy.is_baby}</TableCell>
+                                <TableCell align="right">{specy.color.name}</TableCell>
+                                <TableCell align="right">{types[0].type.name}</TableCell>
     
                             </TableRow>
                         ))}
@@ -116,7 +133,7 @@ const GET_POKEMONS = gql`
 
 const PokemonList = () => {
 
-
+const { loading, error, data } = useQuery(GET_COLORS)  
 
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -125,11 +142,18 @@ const PokemonList = () => {
   const [minWeight, setMinWeight] = React.useState("")
   const [maxWeight, setMaxWeight] = React.useState("")
   const [searchName, setSearchName] = React.useState("")
+
+  const [color, setColor] = React.useState('');
+  const handleChange = (event: SelectChangeEvent) => {
+    setColor(event.target.value as string);
+  };
+
   
 
     
-
-    // display data
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :</p>;
+    
     return (
     <>
         <Box
@@ -140,18 +164,35 @@ const PokemonList = () => {
       noValidate
       autoComplete="off"
     >
-        <TextField id="outlined-basic" label="Pokemon Name" variant="outlined" defaultValue={searchName}
+        <TextField id="outlined-basic" label="Pokemon Name" variant="outlined" value={searchName}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setSearchName(event.target.value);
               }}/>
-        <TextField id="outlined-basic2" label="Min Weight" variant="outlined" value={minWeight}
+        <TextField id="outlined-basic2" label="Min Weight" variant="outlined" type="number" value={minWeight}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setMinWeight((event.target.value));
+                setMinWeight((event.target.value));
           }} />
-        <TextField id="outlined-basic2" label="Max Weight" variant="outlined" defaultValue={maxWeight}
+        <TextField id="outlined-basic2" label="Max Weight" variant="outlined" type="number" value={maxWeight}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setMaxWeight((event.target.value));
               }}/>
+        <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Color</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={color}
+          label="Color"
+          onChange={handleChange}
+        >
+          <MenuItem value={"%"}>all</MenuItem>
+
+          {data.color.map(({name, id}) => (
+                    <MenuItem value={name} key={id}>{name}</MenuItem>        
+                        ))}
+
+        </Select>
+      </FormControl>
         <FormGroup>
             <FormControlLabel control={<Checkbox />} label="Is baby" /> 
         </FormGroup>
@@ -159,7 +200,7 @@ const PokemonList = () => {
 
          
          <DisplayPokemons pageNumber = {(page-1)*20} searchName = {"%".concat(searchName).concat("%")} 
-         minWeight={minWeight?minWeight:0} maxWeight={maxWeight?maxWeight:100000}/>
+         minWeight={minWeight?minWeight:0} maxWeight={maxWeight?maxWeight:100000} color={color?color:"%"}/>
         
     </>
     )
