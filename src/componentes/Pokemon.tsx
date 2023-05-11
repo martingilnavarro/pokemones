@@ -44,7 +44,7 @@ const GET_POKEMON = gql`
             }
             specy: pokemon_v2_pokemonspecy {
               evolutionchain: pokemon_v2_evolutionchain {
-                species: pokemon_v2_pokemonspecies {
+                species: pokemon_v2_pokemonspecies(order_by: {order: asc}) {
                   name
                   id
                 }

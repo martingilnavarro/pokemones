@@ -27,10 +27,11 @@ import MenuItem from '@mui/material/MenuItem';
 
 
 const GET_POKEMONS = gql`
-    query GetPokemons($pageNumber: Int!, $searchName: String, $minWeight: Int!, $maxWeight: Int!, $color: String) {
+    query GetPokemons($pageNumber: Int!, $searchName: String, $minWeight: Int!, $maxWeight: Int!, $color: String, $isBaby: Boolean) {
         pokemons: pokemon_v2_pokemon(offset: $pageNumber, limit: 20, 
             order_by: {id: asc}, where: {weight: {_gte: $minWeight, _lte: $maxWeight}, 
-            name: {_ilike: $searchName}, pokemon_v2_pokemonspecy: {pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
+            name: {_ilike: $searchName}, 
+            pokemon_v2_pokemonspecy: {is_baby: {_eq: $isBaby}, pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
             name 
             id
             weight
@@ -49,7 +50,8 @@ const GET_POKEMONS = gql`
               }
         } 
         pokemonsCount: pokemon_v2_pokemon_aggregate (where: {weight: {_gte: $minWeight, _lte: $maxWeight}, 
-            name: {_ilike: $searchName}, pokemon_v2_pokemonspecy: {pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
+            name: {_ilike: $searchName}, 
+            pokemon_v2_pokemonspecy: {is_baby: {_eq: $isBaby}, pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
             aggregate {
               count
             }
@@ -68,9 +70,9 @@ const GET_POKEMONS = gql`
 
 
 
-  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight, color} ) {
+  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight, color, isBaby} ) {
     const { loading, error, data } = useQuery(GET_POKEMONS, {
-        variables: {pageNumber, searchName, minWeight, maxWeight, color}, 
+        variables: {pageNumber, searchName, minWeight, maxWeight, color, isBaby}, 
     });
 
     const location = useLocation();
@@ -117,7 +119,7 @@ const GET_POKEMONS = gql`
                                     <LinkUI href={'./' + name}>{name}</LinkUI>
                                 </TableCell>
                                 <TableCell align="right">{weight}</TableCell>
-                                <TableCell align="right">{specy.is_baby}</TableCell>
+                                <TableCell align="right">{specy.is_baby?"true":"false"}</TableCell>
                                 <TableCell align="right">{specy.color.name}</TableCell>
                                 <TableCell align="right">{types[0].type.name}</TableCell>
     
@@ -142,6 +144,11 @@ const { loading, error, data } = useQuery(GET_COLORS)
   const [minWeight, setMinWeight] = React.useState("")
   const [maxWeight, setMaxWeight] = React.useState("")
   const [searchName, setSearchName] = React.useState("")
+
+  const [isBaby, setIsBaby] = React.useState(false)
+  const handleChangeBaby = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsBaby(event.target.checked);
+  };
 
   const [color, setColor] = React.useState('');
   const handleChange = (event: SelectChangeEvent) => {
@@ -194,13 +201,14 @@ const { loading, error, data } = useQuery(GET_COLORS)
         </Select>
       </FormControl>
         <FormGroup>
-            <FormControlLabel control={<Checkbox />} label="Is baby" /> 
+            <FormControlLabel control={<Checkbox checked={isBaby} onChange={handleChangeBaby}/>} label="Is baby" /> 
         </FormGroup>
         </Box>
 
          
          <DisplayPokemons pageNumber = {(page-1)*20} searchName = {"%".concat(searchName).concat("%")} 
-         minWeight={minWeight?minWeight:0} maxWeight={maxWeight?maxWeight:100000} color={color?color:"%"}/>
+         minWeight={minWeight?minWeight:0} maxWeight={maxWeight?maxWeight:100000} 
+         color={color?color:"%"} isBaby={isBaby}/>
         
     </>
     )
