@@ -1,9 +1,5 @@
 import * as React from 'react';
-
 import { useQuery, gql } from '@apollo/client';
-
-//import gets from apis
-
 import { useParams } from 'react-router-dom';
 
 //imports material UI
@@ -60,10 +56,7 @@ function DisplayPokemon( {pokeName} ) {
   const { loading, error, data } = useQuery(GET_POKEMON, {
     variables: {pokeName},
   });
-  
 
-
-  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : ${error.message}</p>;
@@ -89,9 +82,6 @@ function DisplayPokemon( {pokeName} ) {
         
       
         <CardContent> 
-
-
-            
 
             <Typography variant="h6">Evolution Chain:</Typography> 
             <List>
@@ -136,10 +126,7 @@ function DisplayPokemon( {pokeName} ) {
               ))}
             </List>
 
-            
 
-            
-              
         </CardContent>
       </Card>
     </Grid>
@@ -155,10 +142,8 @@ const Pokemon = () => {
  
   return (
 
-
     <DisplayPokemon pokeName = {params.id} />
 
-  
     )
   ;
 }
