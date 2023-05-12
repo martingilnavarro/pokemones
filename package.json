@@ -54,6 +54,9 @@
   "devDependencies": {
     "source-map-loader": "^4.0.1",
     "ts-loader": "^9.4.2",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.2"
+  },
+  "overrides": {
+    "typescript": "^5.0.2"
   }
 }
