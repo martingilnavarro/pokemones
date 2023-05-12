@@ -23,15 +23,21 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import ListItemText from '@mui/material/ListItemText';
+
+
 
 
 
 const GET_POKEMONS = gql`
-    query GetPokemons($pageNumber: Int!, $searchName: String, $minWeight: Int!, $maxWeight: Int!, $color: String, $isBaby: Boolean) {
+    query GetPokemons($pageNumber: Int!, $searchName: String, $minWeight: Int!, $maxWeight: Int!, $color: String, 
+      $isBaby: Boolean, $type: [String]) {
         pokemons: pokemon_v2_pokemon(offset: $pageNumber, limit: 20, 
             order_by: {id: asc}, where: {weight: {_gte: $minWeight, _lte: $maxWeight}, 
             name: {_ilike: $searchName}, 
-            pokemon_v2_pokemonspecy: {is_baby: {_eq: $isBaby}, pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
+            pokemon_v2_pokemonspecy: {is_baby: {_eq: $isBaby}, pokemon_v2_pokemoncolor: {name: {_ilike: $color}}},
+            pokemon_v2_pokemontypes: {pokemon_v2_type: {name: {_in: $type}}}}) {
             name 
             id
             weight
@@ -51,7 +57,8 @@ const GET_POKEMONS = gql`
         } 
         pokemonsCount: pokemon_v2_pokemon_aggregate (where: {weight: {_gte: $minWeight, _lte: $maxWeight}, 
             name: {_ilike: $searchName}, 
-            pokemon_v2_pokemonspecy: {is_baby: {_eq: $isBaby}, pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}}) {
+            pokemon_v2_pokemonspecy: {is_baby: {_eq: $isBaby}, pokemon_v2_pokemoncolor: {name: {_ilike: $color}}}
+            pokemon_v2_pokemontypes: {pokemon_v2_type: {name: {_in: $type}}}}) {
             aggregate {
               count
             }
@@ -59,20 +66,27 @@ const GET_POKEMONS = gql`
     }
   `;
 
-  const GET_COLORS = gql`
-    query GetColor {
+  const GET_COLORS_TYPES = gql`
+    query GetColorTypes {
         color: pokemon_v2_pokemoncolor {
         name
         id
         }
-    }
+        type: pokemon_v2_pokemontype {
+         type: pokemon_v2_type {
+            name
+          }
+        }
+      }
+      
+    
   `;
 
 
 
-  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight, color, isBaby} ) {
+  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight, color, isBaby, type} ) {
     const { loading, error, data } = useQuery(GET_POKEMONS, {
-        variables: {pageNumber, searchName, minWeight, maxWeight, color, isBaby}, 
+        variables: {pageNumber, searchName, minWeight, maxWeight, color, isBaby, type}, 
     });
 
     const location = useLocation();
@@ -105,7 +119,10 @@ const GET_POKEMONS = gql`
                             <TableCell align='right'>Weight</TableCell> 
                             <TableCell align='right'>Is baby?</TableCell> 
                             <TableCell align='right'>Color</TableCell> 
-                            <TableCell align='right'>Type</TableCell> 
+                            <TableCell align='right'>Type</TableCell>
+                            <TableCell align='right'>Type</TableCell>
+                            
+                            
                                
                         </TableRow>
                     </TableHead>
@@ -122,6 +139,8 @@ const GET_POKEMONS = gql`
                                 <TableCell align="right">{specy.is_baby?"true":"false"}</TableCell>
                                 <TableCell align="right">{specy.color.name}</TableCell>
                                 <TableCell align="right">{types[0].type.name}</TableCell>
+                                <TableCell align="right">{types[1]?types[1].type.name:""}</TableCell>
+                                
     
                             </TableRow>
                         ))}
@@ -135,7 +154,7 @@ const GET_POKEMONS = gql`
 
 const PokemonList = () => {
 
-const { loading, error, data } = useQuery(GET_COLORS)  
+const { loading, error, data } = useQuery(GET_COLORS_TYPES)  
 
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -144,6 +163,7 @@ const { loading, error, data } = useQuery(GET_COLORS)
   const [minWeight, setMinWeight] = React.useState("")
   const [maxWeight, setMaxWeight] = React.useState("")
   const [searchName, setSearchName] = React.useState("")
+  const [type, setType] = React.useState<string[]>([]);
 
   const [isBaby, setIsBaby] = React.useState(false)
   const handleChangeBaby = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,6 +174,49 @@ const { loading, error, data } = useQuery(GET_COLORS)
   const handleChange = (event: SelectChangeEvent) => {
     setColor(event.target.value as string);
   };
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+  const types = [
+    'normal',
+    'fighting',
+    'flying',
+    'poison',
+    'ground',
+    'rock',
+    'bug',
+    'ghost',
+    'steel',
+    'fire',
+    'water',
+    'grass',
+    'electric',
+    'psychic',
+    'ice',
+    'dragon',
+    'dark',
+    'fairy',
+    'unknown',
+    'shadow'
+  ];
+  const handleChangeType = (event: SelectChangeEvent<typeof type>) => {
+    const {
+      target: { value },
+    } = event;
+    setType(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+  
 
   
 
@@ -193,13 +256,35 @@ const { loading, error, data } = useQuery(GET_COLORS)
           onChange={handleChange}
         >
           <MenuItem value={"%"}>all</MenuItem>
-
           {data.color.map(({name, id}) => (
-                    <MenuItem value={name} key={id}>{name}</MenuItem>        
+                    <MenuItem value={name} key={id} >{name}</MenuItem>        
                         ))}
 
         </Select>
+        </FormControl>
+
+        <FormControl sx={{ m: 1, width: 300 }}>
+        <InputLabel id="demo-multiple-checkbox-label">Type</InputLabel>
+        <Select
+          labelId="demo-multiple-checkbox-label"
+          id="demo-multiple-checkbox"
+          multiple
+          value={type}
+          defaultChecked
+          onChange={handleChangeType}
+          input={<OutlinedInput label="Tag" />}
+          renderValue={(selected) => selected.join(', ')}
+          MenuProps={MenuProps}
+        >
+          {types.map((name) => (
+            <MenuItem key={name} value={name}>
+              <Checkbox checked={type.indexOf(name) > -1} />
+              <ListItemText primary={name} />
+            </MenuItem>
+          ))}
+        </Select>
       </FormControl>
+      
         <FormGroup>
             <FormControlLabel control={<Checkbox checked={isBaby} onChange={handleChangeBaby}/>} label="Is baby" /> 
         </FormGroup>
@@ -208,7 +293,7 @@ const { loading, error, data } = useQuery(GET_COLORS)
          
          <DisplayPokemons pageNumber = {(page-1)*20} searchName = {"%".concat(searchName).concat("%")} 
          minWeight={minWeight?minWeight:0} maxWeight={maxWeight?maxWeight:100000} 
-         color={color?color:"%"} isBaby={isBaby}/>
+         color={color?color:"%"} isBaby={isBaby} type={type[0]?type:types}/>
         
     </>
     )
