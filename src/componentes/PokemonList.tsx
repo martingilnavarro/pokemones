@@ -72,11 +72,11 @@ const GET_POKEMONS = gql`
         name
         id
         }
-        type: pokemon_v2_pokemontype {
-         type: pokemon_v2_type {
-            name
-          }
+        type: pokemon_v2_type {
+          id
+          name
         }
+      
       }
       
     
@@ -119,8 +119,8 @@ const GET_POKEMONS = gql`
                             <TableCell align='right'>Weight</TableCell> 
                             <TableCell align='right'>Is baby?</TableCell> 
                             <TableCell align='right'>Color</TableCell> 
-                            <TableCell align='right'>Type</TableCell>
-                            <TableCell align='right'>Type</TableCell>
+                            <TableCell align='right'>Type 1</TableCell>
+                            <TableCell align='right'>Type 2</TableCell>
                             
                             
                                
@@ -185,28 +185,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
     },
   },
 };
-  const types = [
-    'normal',
-    'fighting',
-    'flying',
-    'poison',
-    'ground',
-    'rock',
-    'bug',
-    'ghost',
-    'steel',
-    'fire',
-    'water',
-    'grass',
-    'electric',
-    'psychic',
-    'ice',
-    'dragon',
-    'dark',
-    'fairy',
-    'unknown',
-    'shadow'
-  ];
+  
   const handleChangeType = (event: SelectChangeEvent<typeof type>) => {
     const {
       target: { value },
@@ -218,9 +197,6 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
   };
   
 
-  
-
-    
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :</p>;
     
@@ -276,7 +252,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
           renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}
         >
-          {types.map((name) => (
+          {data.type.map(({name}) => (
             <MenuItem key={name} value={name}>
               <Checkbox checked={type.indexOf(name) > -1} />
               <ListItemText primary={name} />
@@ -293,7 +269,9 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
          
          <DisplayPokemons pageNumber = {(page-1)*20} searchName = {"%".concat(searchName).concat("%")} 
          minWeight={minWeight?minWeight:0} maxWeight={maxWeight?maxWeight:100000} 
-         color={color?color:"%"} isBaby={isBaby} type={type[0]?type:types}/>
+         color={color?color:"%"} isBaby={isBaby} type={type[0]?type:data.type.map(({name}) => (
+          name
+        ))}/>
         
     </>
     )
