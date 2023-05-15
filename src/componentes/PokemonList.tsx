@@ -9,6 +9,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 import { Link as LinkUI} from '@mui/material' ;
 import { Link, useLocation } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
@@ -202,6 +203,15 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
     },
   },
 };
+
+  const removeFilters = () =>{
+  setMinWeight("");
+  setMaxWeight("");
+  setSearchName("");
+  setType([]);
+  setIsBaby(false);
+  setColor('');
+  }
   
   
   
@@ -269,11 +279,13 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
           ))}
         </Select>
       </FormControl>
-      
+      <Button size="small" onClick={removeFilters}>Remove filters</Button>
         <FormGroup>
             <FormControlLabel control={<Checkbox checked={isBaby} onChange={handleChangeBaby}/>} label="Is baby" /> 
         </FormGroup>
         </Box>
+
+        
 
          
          <DisplayPokemons 

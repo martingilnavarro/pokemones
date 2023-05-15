@@ -63,7 +63,7 @@ function DisplayPokemon( {pokeName} : {pokeName:string} ) {
     return (
       <Grid container direction='column' alignItems='center' style={{ minHeight: '100vh', backgroundColor: '#FAFFFF' }}>
           
-      <Button size="small" href='../' >Return to list</Button>
+      <Button size="small" href='../' >Return to Home</Button>
 
       <Card sx={{ maxWidth: 275}}> 
           
