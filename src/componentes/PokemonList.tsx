@@ -136,7 +136,7 @@ const GET_POKEMONS = gql`
         <TableBody>
           {data.pokemons.map(({id, name, weight, specy, types} : {
             id:number; name:string; weight:number; specy:{is_baby:boolean; color:{name:string}}; 
-            types:any}) => (
+            types:{type: {name:string}}[]}) => (
           <TableRow 
             key={id}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
