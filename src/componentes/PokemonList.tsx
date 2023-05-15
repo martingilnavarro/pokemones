@@ -91,7 +91,8 @@ const GET_POKEMONS = gql`
   `;
 
 
-  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight, color, isBaby, type} ) {
+  function DisplayPokemons( {pageNumber, searchName, minWeight, maxWeight, color, isBaby, type}: {
+    pageNumber:number; searchName:string; minWeight:string|number; maxWeight:string|number; color:string; isBaby:boolean; type:string} ) {
     const { loading, error, data } = useQuery(GET_POKEMONS, {
         variables: {pageNumber, searchName, minWeight, maxWeight, color, isBaby, type}, 
     });
@@ -133,7 +134,9 @@ const GET_POKEMONS = gql`
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.pokemons.map(({id, name, weight, specy, types}) => (
+          {data.pokemons.map(({id, name, weight, specy, types} : {
+            id:number; name:string; weight:number; specy:{is_baby:boolean; color:{name:string}}; 
+            types:any}) => (
           <TableRow 
             key={id}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -238,7 +241,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
           onChange={handleChange}
         >
           <MenuItem value={"%"}>all</MenuItem>
-          {data.color.map(({name, id}) => (
+          {data.color.map(({name, id} :  {name:string; id:number}) => (
                     <MenuItem value={name} key={id} >{name}</MenuItem>        
                         ))}
 
@@ -258,7 +261,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
           renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}
         >
-          {data.type.map(({name}) => (
+          {data.type.map(({name} : {name:string}) => (
             <MenuItem key={name} value={name}>
               <Checkbox checked={type.indexOf(name) > -1} />
               <ListItemText primary={name} />
@@ -280,7 +283,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
           maxWeight={maxWeight?maxWeight:100000} 
           color={color?color:"%"} 
           isBaby={isBaby} 
-          type={type[0]?type:data.type.map(({name}) => (name))}
+          type={type[0]?type:data.type.map(({name} : {name:string}) => (name))}
           />
         
     </>

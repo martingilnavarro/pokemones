@@ -52,7 +52,7 @@ const GET_POKEMON = gql`
     }
   `;
 
-function DisplayPokemon( {pokeName} ) {
+function DisplayPokemon( {pokeName} : {pokeName:string} ) {
   const { loading, error, data } = useQuery(GET_POKEMON, {
     variables: {pokeName},
   });
@@ -85,7 +85,7 @@ function DisplayPokemon( {pokeName} ) {
 
             <Typography variant="h6">Evolution Chain:</Typography> 
             <List>
-              {data.pokemon[0].specy.evolutionchain.species.map(({id, name}) => (
+              {data.pokemon[0].specy.evolutionchain.species.map(({id, name} : {id:number; name:string}) => (
                 <ListItem disablePadding key={id}> 
                   <ListItemButton autoFocus={name===data.pokemon[0].name}component="a" href={'.././' + name}>  
                   <ListItemText primary={name} />  
@@ -110,7 +110,7 @@ function DisplayPokemon( {pokeName} ) {
 
             <Typography variant="h6">Abilities:</Typography> 
             <List>
-              {data.pokemon[0].abilities.map(({ability}) => (
+              {data.pokemon[0].abilities.map(({ability} : {ability:{id:number;name:string}}) => (
                 <ListItem key={ability.id}>    
                   <ListItemText primary={ability.name} />     
                 </ListItem> 
@@ -119,7 +119,7 @@ function DisplayPokemon( {pokeName} ) {
 
             <Typography variant="h6">Types:</Typography> 
             <List>
-              {data.pokemon[0].types.map(({type}) => (
+              {data.pokemon[0].types.map(({type} : {type:{id:number;name:string}}) => (
                 <ListItem key={type.id}>    
                   <ListItemText primary={type.name} />     
                 </ListItem> 
