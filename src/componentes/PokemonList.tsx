@@ -105,6 +105,7 @@ const GET_POKEMONS = gql(/* GraphQL */ `
   
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :</p>;
+    if (!data.pokemonsCount.aggregate.count) return <p>There are no Pokemons that fulfill these filters</p>
     return (
         <>
 
@@ -238,6 +239,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
     if (error) return <p>Error :</p>;
     
     return (
+      
     <>
         <Box
       component="form"
@@ -299,12 +301,16 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
       </FormControl>
 
       <Button size="large" variant="contained" onClick={applyFilters}>Apply filters</Button>
-      <Button size="small" onClick={removeFilters}>Reset filters</Button>
+      
 
         <FormGroup>
             <FormControlLabel control={<Checkbox checked={isBaby} onChange={handleChangeBaby}/>} label="Is baby" /> 
         </FormGroup>
+
+        
         </Box>
+
+        <Button size="small" onClick={removeFilters}>Reset filters</Button>
 
 
          <DisplayPokemons 
