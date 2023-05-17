@@ -88,7 +88,7 @@ function DisplayPokemon( {pokeName} : {pokeName:string} ) {
               {data.pokemon[0].specy.evolutionchain.species.map(({id, name} : {id:number; name:string}) => (
                 <ListItem disablePadding key={id}> 
                   <ListItemButton autoFocus={name===data.pokemon[0].name}component="a" href={'.././' + name}>  
-                  <ListItemText primary={name} />  
+                  <ListItemText primary={name} />
                   </ListItemButton> 
                 </ListItem>
               ))}

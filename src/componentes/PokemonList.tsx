@@ -27,7 +27,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import ListItemText from '@mui/material/ListItemText';
 
 
-const GET_POKEMONS = gql`
+const GET_POKEMONS = gql(/* GraphQL */ `
     query GetPokemons(
       $pageNumber: Int!, 
       $searchName: String, 
@@ -73,7 +73,7 @@ const GET_POKEMONS = gql`
             }
           }
     }
-  `;
+  `);
 
   const GET_COLORS_TYPES = gql`
     query GetColorTypes {
@@ -177,10 +177,18 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
   const [isBaby, setIsBaby] = React.useState(false)
   const [color, setColor] = React.useState('');
 
+  const [minWeightTable, setMinWeightTable] = React.useState("")
+  const [maxWeightTable, setMaxWeightTable] = React.useState("")
+  const [searchNameTable, setSearchNameTable] = React.useState("")
+  const [typeTable, setTypeTable] = React.useState<string[]>([]);
+  const [isBabyTable, setIsBabyTable] = React.useState(false)
+  const [colorTable, setColorTable] = React.useState('');
+
+  //handle Changes
   const handleChangeBaby = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsBaby(event.target.checked);
   };
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChangeColor = (event: SelectChangeEvent) => {
     setColor(event.target.value as string);
   };
   const handleChangeType = (event: SelectChangeEvent<typeof type>) => {
@@ -193,6 +201,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
     );
   };
 
+  // Format items in Types filter
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -212,6 +221,15 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
   setIsBaby(false);
   setColor('');
   }
+
+  const applyFilters = () =>{
+    setMinWeightTable(minWeight);
+    setMaxWeightTable(maxWeight);
+    setSearchNameTable(searchName);
+    setTypeTable(type);
+    setIsBabyTable(isBaby);
+    setColorTable(color);
+    }
   
   
   
@@ -237,7 +255,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setMinWeight((event.target.value));
           }} />
-        <TextField id="outlined-basic2" label="Max Weight" variant="outlined" type="number" value={maxWeight}
+        <TextField id="outlined-basic3" label="Max Weight" variant="outlined" type="number" value={maxWeight}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setMaxWeight((event.target.value));
               }}/>
@@ -248,7 +266,7 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
           id="demo-simple-select"
           value={color}
           label="Color"
-          onChange={handleChange}
+          onChange={handleChangeColor}
         >
           <MenuItem value={"%"}>all</MenuItem>
           {data.color.map(({name, id} :  {name:string; id:number}) => (
@@ -271,31 +289,32 @@ const { loading, error, data } = useQuery(GET_COLORS_TYPES)
           renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}
         >
-          {data.type.map(({name} : {name:string}) => (
-            <MenuItem key={name} value={name}>
+          {data.type.map(({name, id} : {name:string, id:number}) => (
+            <MenuItem key={id} value={name}>
               <Checkbox checked={type.indexOf(name) > -1} />
               <ListItemText primary={name} />
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-      <Button size="small" onClick={removeFilters}>Remove filters</Button>
+
+      <Button size="large" variant="contained" onClick={applyFilters}>Apply filters</Button>
+      <Button size="small" onClick={removeFilters}>Reset filters</Button>
+
         <FormGroup>
             <FormControlLabel control={<Checkbox checked={isBaby} onChange={handleChangeBaby}/>} label="Is baby" /> 
         </FormGroup>
         </Box>
 
-        
 
-         
          <DisplayPokemons 
           pageNumber = {(page-1)*20} 
-          searchName = {"%".concat(searchName).concat("%")} 
-          minWeight={minWeight?minWeight:0} 
-          maxWeight={maxWeight?maxWeight:100000} 
-          color={color?color:"%"} 
-          isBaby={isBaby} 
-          type={type[0]?type:data.type.map(({name} : {name:string}) => (name))}
+          searchName = {"%".concat(searchNameTable).concat("%")} 
+          minWeight={minWeightTable?minWeightTable:0} 
+          maxWeight={maxWeightTable?maxWeightTable:100000} 
+          color={colorTable?colorTable:"%"} 
+          isBaby={isBabyTable} 
+          type={typeTable[0]?typeTable:data.type.map(({name} : {name:string}) => (name))}
           />
         
     </>
